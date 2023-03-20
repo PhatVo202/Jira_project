@@ -17,6 +17,7 @@ export default function Register() {
       passWord: values.passWord,
       email: values.email,
     };
+
     try {
       await registerApi(data);
 
@@ -30,9 +31,11 @@ export default function Register() {
 
       navigate("/login");
     } catch (error) {
+      console.log(error.response.data.message);
       notification.error({
-        message: error.responsive.data.content,
+        message: error.response.data.message,
       });
+      console.log(error);
     }
   };
 

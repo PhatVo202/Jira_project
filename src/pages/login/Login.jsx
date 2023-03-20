@@ -1,15 +1,47 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, notification } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faTwitter, faFacebookF } from "@fortawesome/free-brands-svg-icons";
 import { useMediaQuery } from "react-responsive";
+import { loginApi } from "../../servers/user";
+import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfoAction } from "../../store/actions/userAction";
 
 export default function Login() {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userState = useSelector((state) => state.userReducer);
+  const onFinish = async (values) => {
+    const data = {
+      email: values.email,
+      passWord: values.passWord,
+    };
+
+    try {
+      const result = await loginApi(data);
+      localStorage.setItem(
+        "USER_INFO_KEY",
+        JSON.stringify(result.data.content)
+      );
+      dispatch(setUserInfoAction(result.data.content));
+      Swal.fire({
+        title: "Đăng nhập thành công",
+        text: `Xin chào ${userState.userInfo.name}`,
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      navigate("/projectmanagement");
+    } catch (error) {
+      notification.error({
+        message: error.response.data.message,
+      });
+    }
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -148,7 +180,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-      <Outlet />
     </div>
   );
 }

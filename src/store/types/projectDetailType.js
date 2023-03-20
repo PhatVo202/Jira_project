@@ -1,0 +1,1 @@
+export const SET_PROJECT_DETAIL = "SET_PROJECT_DETAIL";
