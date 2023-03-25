@@ -1,6 +1,5 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
-import AdminLayout from "../layouts/admin/AdminLayout";
 import CreateProject from "../pages/createproject/CreateProject";
 import EditProject from "../pages/editproject/EditProject";
 

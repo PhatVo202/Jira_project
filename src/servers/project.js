@@ -8,6 +8,13 @@ export const fetchAllProjectApi = () => {
   });
 };
 
+export const fetchProjectKeyApi = (keyword) => {
+  return axiosRequest({
+    url: `/Project/getAllProject?keyword=${keyword}`,
+    method: "GET",
+  });
+};
+
 export const fetchProjectDetailsApi = (id) => {
   return axiosRequest({
     url: `/Project/getProjectDetail?id=${id}`,
@@ -56,6 +63,14 @@ export const getAssignUserProjectApi = (data) => {
 export const removeUserFromProjectApi = (data) => {
   return axiosRequest({
     url: `/Project/removeUserFromProject`,
+    method: "POST",
+    data: data,
+  });
+};
+
+export const createTaskApi = (data) => {
+  return axiosRequest({
+    url: `/Project/createTask`,
     method: "POST",
     data: data,
   });

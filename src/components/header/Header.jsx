@@ -12,6 +12,9 @@ import {
   Row,
   Select,
   Space,
+  Slider,
+  InputNumber,
+  notification,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,25 +25,52 @@ import { fetchTaskTypeApi } from "../../servers/tasktype";
 
 import { Editor } from "@tinymce/tinymce-react";
 import { setUserInfoAction } from "../../store/actions/userAction";
+import {
+  getAllMember,
+  getMemberByProjectId,
+  setArrProjectAll,
+} from "../../store/actions/projectDetailAction";
+import { createTaskApi } from "../../servers/project";
+import Swal from "sweetalert2";
 const { Option } = Select;
 export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userStateReducer = useSelector((state) => state.userReducer);
+  const { arrProject } = useSelector((state) => state.projectDetailReducer);
+
+  const [timeTracking, setTimeTracking] = useState({
+    timeTrackingSpent: 0,
+    timeTrackingRemaining: 0,
+  });
+
   const [open, setOpen] = useState(false);
-  const dataProject = useProjectAll();
-  console.log(dataProject);
+  // const dataProject = useProjectAll();
+
   const [status, setStatus] = useState([]);
   const [priority, setPriority] = useState([]);
   const [taskType, setTaskType] = useState([]);
 
+  const { arrMember } = useSelector((state) => state.projectDetailReducer);
+
+  const userOptions = arrMember?.map((item) => {
+    return { label: item.name, value: item.userId };
+  });
+  const [stateProjectId, setStateProjectId] = useState();
+
   const editoRef = useRef();
 
   useEffect(() => {
+    getAllProjectList();
     getStatusAll();
     getPriorityAll();
     getTaskTypeAll();
+    dispatch(getAllMember(""));
   }, []);
+
+  const getAllProjectList = () => {
+    dispatch(setArrProjectAll());
+  };
 
   const getStatusAll = async () => {
     const result = await fetchStatusApi();
@@ -54,7 +84,7 @@ export default function Header() {
 
   const getTaskTypeAll = async () => {
     const result = await fetchTaskTypeApi();
-    console.log(result);
+
     setTaskType(result.data.content);
   };
 
@@ -162,7 +192,6 @@ export default function Header() {
 
   const [current, setCurrent] = useState("mail");
   const onClick = (e) => {
-    console.log("click ", e);
     setCurrent(e.key);
   };
 
@@ -170,6 +199,36 @@ export default function Header() {
     localStorage.removeItem("USER_INFO_KEY");
     dispatch(setUserInfoAction(null));
     navigate("/login");
+  };
+
+  const handleFinish = async (value) => {
+    const data = {
+      taskName: value.taskName, //ok
+      description: editoRef.current.getContent(), //ok
+      statusId: value.statusId, //ok ?
+      originalEstimate: value.originalEstimate,
+      timeTrackingSpent: timeTracking.timeTrackingSpent,
+      timeTrackingRemaining: timeTracking.timeTrackingRemaining,
+      projectId: stateProjectId,
+      typeId: value.typeId,
+      priorityId: value.priorityId,
+      listUserAsign: [value.listUserAsign], //ok
+    };
+    console.log(data);
+    // try {
+    //   await createTaskApi(data);
+    //   Swal.fire({
+    //     title: "Tạo task thành công!",
+    //     text: "Hoàn tất!!",
+    //     icon: "success",
+    //     timer: 2000,
+    //     showConfirmButton: false,
+    //   });
+    // } catch (error) {
+    //   notification.error({
+    //     message: error.response.data.content,
+    //   });
+    // }
   };
 
   return (
@@ -247,23 +306,28 @@ export default function Header() {
 
           // }
         >
-          <Form layout="vertical" hideRequiredMark>
+          <Form layout="vertical" onFinish={handleFinish}>
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item
-                  name="name"
+                  name="projectId"
                   label="Project"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter user name",
-                    },
-                  ]}
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "Please enter user name",
+                  //   },
+                  // ]}
                 >
-                  <Select>
-                    {dataProject.map((item, index) => {
+                  <Select
+                    onChange={(value) => {
+                      dispatch(getMemberByProjectId(value));
+                      setStateProjectId(value);
+                    }}
+                  >
+                    {arrProject.map((item, index) => {
                       return (
-                        <Select.Option key={index} value={item.projectName}>
+                        <Select.Option key={index} value={item.id}>
                           {item.projectName}
                         </Select.Option>
                       );
@@ -276,7 +340,7 @@ export default function Header() {
               </Col>
               <Col span={24}>
                 <Form.Item
-                  name="url"
+                  name="taskName"
                   label="Task name"
                   rules={[
                     {
@@ -292,7 +356,7 @@ export default function Header() {
             <Row gutter={16}>
               <Col span={24}>
                 <Form.Item
-                  name="status"
+                  name="statusId"
                   label="Status"
                   rules={[
                     {
@@ -316,7 +380,7 @@ export default function Header() {
             <Row gutter={48}>
               <Col span={12}>
                 <Form.Item
-                  name="approver"
+                  name="priorityId"
                   label="Priority"
                   rules={[
                     {
@@ -328,7 +392,7 @@ export default function Header() {
                   <Select placeholder="Please choose the approver">
                     {priority.map((item, index) => {
                       return (
-                        <Select.Option value={item.priorityId}>
+                        <Select.Option key={index} value={item.priorityId}>
                           {item.priority}
                         </Select.Option>
                       );
@@ -338,7 +402,7 @@ export default function Header() {
               </Col>
               <Col span={12}>
                 <Form.Item
-                  name="type"
+                  name="typeId"
                   label="Task Type"
                   rules={[
                     {
@@ -350,7 +414,7 @@ export default function Header() {
                   <Select placeholder="Please choose the type">
                     {taskType.map((item, index) => {
                       return (
-                        <Select.Option value={item.id}>
+                        <Select.Option key={index} value={item.id}>
                           {item.taskType}
                         </Select.Option>
                       );
@@ -362,7 +426,7 @@ export default function Header() {
             <Row gutter={48}>
               <Col span={24}>
                 <Form.Item
-                  name="assigners"
+                  name="listUserAsign"
                   label="Assigners"
                   rules={[
                     {
@@ -373,59 +437,97 @@ export default function Header() {
                 >
                   <Select
                     mode="multiple"
+                    options={userOptions}
                     style={{ width: "100%" }}
                     placeholder="select one country"
-                    defaultValue={["china"]}
-                    optionLabelProp="label"
-                  >
-                    <Option value="china" label="China">
-                      <Space>
-                        <span role="img" aria-label="China">
-                          🇨🇳
-                        </span>
-                        China (中国)
-                      </Space>
-                    </Option>
-                    <Option value="usa" label="USA">
-                      <Space>
-                        <span role="img" aria-label="USA">
-                          🇺🇸
-                        </span>
-                        USA (美国)
-                      </Space>
-                    </Option>
-                    <Option value="japan" label="Japan">
-                      <Space>
-                        <span role="img" aria-label="Japan">
-                          🇯🇵
-                        </span>
-                        Japan (日本)
-                      </Space>
-                    </Option>
-                    <Option value="korea" label="Korea">
-                      <Space>
-                        <span role="img" aria-label="Korea">
-                          🇰🇷
-                        </span>
-                        Korea (韩国)
-                      </Space>
-                    </Option>
-                  </Select>
+                    optionFilterProp="label"
+                    onSelect={(value) => {
+                      console.log(value);
+                    }}
+                  ></Select>
                 </Form.Item>
               </Col>
             </Row>
             <Row gutter={16}>
               <Col span={24}>
-                <Form.Item name="description" label="Description">
+                <Slider
+                  // defaultValue={30}
+                  tooltip={{ open: true }}
+                  value={timeTracking.timeTrackingSpent}
+                  max={
+                    Number(timeTracking.timeTrackingSpent) +
+                    Number(timeTracking.timeTrackingRemaining)
+                  }
+                />
+                <div className="row mb-3">
+                  <div className="text-left col-6 font-weight-bold">
+                    {timeTracking.timeTrackingSpent} hour (s) spent
+                  </div>
+                  <div className="text-right col-6 font-weight-bold">
+                    {timeTracking.timeTrackingRemaining} hour (s) remaining
+                  </div>
+                </div>
+              </Col>
+              <Col span={12}>
+                <label>Total Estimated Hours</label>
+                <InputNumber
+                  size="middle"
+                  min={0}
+                  name="timeTrackingSpent"
+                  max={100000}
+                  defaultValue={0}
+                  style={{ width: "100%" }}
+                  onChange={(value) => {
+                    setTimeTracking({
+                      ...timeTracking,
+                      timeTrackingSpent: value,
+                    });
+                  }}
+                />
+              </Col>
+              <Col span={12}>
+                <label>Hours spent</label>
+                <InputNumber
+                  size="middle"
+                  min={0}
+                  name="timeTrackingRemaining"
+                  max={100000}
+                  defaultValue={0}
+                  style={{ width: "100%" }}
+                  onChange={(value) => {
+                    setTimeTracking({
+                      ...timeTracking,
+                      timeTrackingRemaining: value,
+                    });
+                  }}
+                />
+              </Col>
+              <Col span={24}>
+                <label>Original Estimate</label>
+                <Form.Item name="originalEstimate">
+                  <InputNumber
+                    size="middle"
+                    min={0}
+                    max={100000}
+                    defaultValue={0}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item label="Description">
                   <Editor
                     onInit={(evt, editor) => (editoRef.current = editor)}
                   />
                 </Form.Item>
               </Col>
             </Row>
+            <button type="submit">submit</button>
             <Space>
               <Button onClick={onClose}>Cancel</Button>
-              <Button onClick={onClose} type="primary">
+              <Button htmlType="submit" type="primary">
                 Submit
               </Button>
             </Space>

@@ -19,8 +19,13 @@ import {
 import { EditOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons";
 import { fetchGetUserApi, getUserProjectIdApi } from "../../servers/user";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setProjectDetailAction } from "../../store/actions/projectDetailAction";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteProjectAction,
+  setMemberInfoAction,
+  setProjectDetailAction,
+  setProjectListAction,
+} from "../../store/actions/projectDetailAction";
 import { useProjectAll } from "../../hooks/useAllProject";
 
 export default function ProjectManagement() {
@@ -28,18 +33,16 @@ export default function ProjectManagement() {
   const navigate = useNavigate();
   const [value, setValue] = useState("");
   const [userSearch, setUserSearch] = useState([]);
+  const listAllProject = useSelector((state) => state.projectDetailReducer);
 
-  const [userProjectId, setUserProjectId] = useState([]);
   useEffect(() => {
-    getUserProjectId();
+    getAllProject();
   }, []);
 
   const dataProject = useProjectAll();
 
-  const getUserProjectId = async () => {
-    const result = await getUserProjectIdApi(dataProject.id);
-
-    setUserProjectId(result.data.content);
+  const getAllProject = () => {
+    dispatch(setProjectListAction());
   };
 
   const columns = [
@@ -161,6 +164,7 @@ export default function ProjectManagement() {
                                   cursor: "pointer",
                                   borderRadius: "50%",
                                   color: "white",
+                                  textAlign: "center",
                                 }}
                               />
                             </td>
@@ -196,13 +200,22 @@ export default function ProjectManagement() {
                         setValue(text);
                       }}
                       onSelect={async (valueSelect, option) => {
+                        console.log({ valueSelect: valueSelect });
+                        console.log({ option: option });
                         setValue(option.label);
                         const data = {
                           projectId: text.id,
                           userId: valueSelect,
                         };
 
-                        await getAssignUserProjectApi(data);
+                        try {
+                          await getAssignUserProjectApi(data);
+                          dispatch(setMemberInfoAction(valueSelect, text.id));
+                        } catch (error) {
+                          notification.error({
+                            message: error.response.data.content,
+                          });
+                        }
                       }}
                     />
                   </div>
@@ -242,6 +255,7 @@ export default function ProjectManagement() {
               onClick={async () => {
                 try {
                   await deleteProjectApi(text.id);
+                  dispatch(deleteProjectAction(text.id));
                   notification.success({
                     message: "Xoá thành công!",
                   });
@@ -269,6 +283,8 @@ export default function ProjectManagement() {
     setUserSearch(result.data.content);
   };
 
+  const handleSearch = (value) => {};
+
   return (
     <div>
       <Header />
@@ -285,19 +301,16 @@ export default function ProjectManagement() {
             Create Project
           </Button>
         </div>
-        <AutoComplete
-          className="mb-3"
-          dropdownMatchSelectWidth={252}
-          style={{
-            width: 400,
-            height: 31,
-          }}
-          onSearch
-        >
-          <Input.Search size="large" placeholder="input here" enterButton />
-        </AutoComplete>
+        <div>
+          <Input.Search
+            size="large"
+            placeholder="Search here"
+            enterButton
+            onSearch={handleSearch}
+          />
 
-        <Table columns={columns} dataSource={dataProject} />
+          <Table columns={columns} dataSource={listAllProject.projectList} />
+        </div>
       </div>
     </div>
   );
