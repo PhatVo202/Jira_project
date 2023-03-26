@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/header/Header";
 
 import {
@@ -10,6 +10,7 @@ import {
   Button,
   notification,
   Popover,
+  Space,
 } from "antd";
 import {
   deleteProjectApi,
@@ -17,16 +18,19 @@ import {
   removeUserFromProjectApi,
 } from "../../servers/project";
 import { EditOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons";
-import { fetchGetUserApi, getUserProjectIdApi } from "../../servers/user";
-import { useNavigate } from "react-router-dom";
+import { fetchGetUserApi } from "../../servers/user";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteMemberAction,
   deleteProjectAction,
+  filterProjectAction,
   setMemberInfoAction,
-  setProjectDetailAction,
+  setProjectDetailArrAction,
   setProjectListAction,
 } from "../../store/actions/projectDetailAction";
 import { useProjectAll } from "../../hooks/useAllProject";
+import { LoadingContext } from "../../contexts/loading/LoadingContext";
 
 export default function ProjectManagement() {
   const dispatch = useDispatch();
@@ -35,6 +39,8 @@ export default function ProjectManagement() {
   const [userSearch, setUserSearch] = useState([]);
   const listAllProject = useSelector((state) => state.projectDetailReducer);
 
+  const [_, setLoadingState] = useContext(LoadingContext);
+
   useEffect(() => {
     getAllProject();
   }, []);
@@ -42,7 +48,9 @@ export default function ProjectManagement() {
   const dataProject = useProjectAll();
 
   const getAllProject = () => {
+    setLoadingState({ isLoading: true });
     dispatch(setProjectListAction());
+    setLoadingState({ isLoading: false });
   };
 
   const columns = [
@@ -68,6 +76,16 @@ export default function ProjectManagement() {
       },
       sortDirection: ["descend"],
       key: 2,
+      render: (text, record, index) => {
+        return (
+          <NavLink
+            to={`/projectdetail/${record.id}`}
+            style={{ textDecoration: "none" }}
+          >
+            {text}
+          </NavLink>
+        );
+      },
     },
     {
       title: "Category name",
@@ -96,7 +114,7 @@ export default function ProjectManagement() {
 
       key: 4,
       render: (text) => {
-        return <Tag color="lime">{text.creator.name}</Tag>;
+        return <Tag color="purple">{text.creator.name}</Tag>;
       },
     },
     {
@@ -109,7 +127,7 @@ export default function ProjectManagement() {
       render: (text) => {
         return (
           <div>
-            {text?.members?.map((item, index) => {
+            {text?.members?.slice(0, 3).map((item, index) => {
               return (
                 <Popover
                   placement="topLeft"
@@ -145,8 +163,12 @@ export default function ProjectManagement() {
                                     projectId: text.id,
                                     userId: item.userId,
                                   };
+
                                   try {
                                     await removeUserFromProjectApi(data);
+                                    dispatch(
+                                      deleteMemberAction(text.id, item.userId)
+                                    );
                                     notification.success({
                                       message: "Xoá user thành công!",
                                     });
@@ -179,7 +201,89 @@ export default function ProjectManagement() {
                 </Popover>
               );
             })}
-            {/* {text.members?.length > 3 ? <Avatar>...</Avatar> : ""} */}
+            {text.members?.length > 3 ? (
+              <Popover
+                placement="topLeft"
+                title={"Members"}
+                trigger="hover"
+                content={() => {
+                  return (
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Avatar</th>
+                          <th>Account</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {text.members?.slice(3, 100).map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{item.userId}</td>
+                              <td>
+                                <Avatar
+                                  height={30}
+                                  width={30}
+                                  style={{ borderRadius: "50%" }}
+                                  src={item.avatar}
+                                  alt=""
+                                />
+                              </td>
+                              <td>{item.name}</td>
+                              <td>
+                                <Space>
+                                  <CloseOutlined
+                                    onClick={async () => {
+                                      const data = {
+                                        projectId: text.id,
+                                        userId: item.userId,
+                                      };
+
+                                      try {
+                                        await removeUserFromProjectApi(data);
+                                        dispatch(
+                                          deleteMemberAction(
+                                            text.id,
+                                            item.userId
+                                          )
+                                        );
+                                        notification.success({
+                                          message: "Xoá user thành công!",
+                                        });
+                                      } catch (error) {
+                                        notification.error({
+                                          message: error.response.data.content,
+                                        });
+                                      }
+                                    }}
+                                    style={{
+                                      backgroundColor: "red",
+                                      width: "30px",
+                                      height: "30px",
+                                      lineHeight: "30px",
+                                      cursor: "pointer",
+                                      borderRadius: "50%",
+                                      color: "white",
+                                      textAlign: "center",
+                                    }}
+                                  />
+                                </Space>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  );
+                }}
+              >
+                <Avatar>...</Avatar>
+              </Popover>
+            ) : (
+              ""
+            )}
             <Popover
               placement="bottomRight"
               title={"text"}
@@ -241,7 +345,6 @@ export default function ProjectManagement() {
           <>
             <EditOutlined
               onClick={() => {
-                dispatch(setProjectDetailAction(text));
                 navigate(`/edit/${text.id}`);
               }}
               style={{
@@ -283,7 +386,10 @@ export default function ProjectManagement() {
     setUserSearch(result.data.content);
   };
 
-  const handleSearch = (value) => {};
+  const handleSearch = (value) => {
+    value === "" && dispatch(setProjectListAction());
+    value && dispatch(filterProjectAction(value));
+  };
 
   return (
     <div>

@@ -1,5 +1,6 @@
 import { data } from "jquery";
 import {
+  DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
@@ -7,13 +8,15 @@ import {
   GET_USER_BY_PROJECTID,
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL,
+  SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
 } from "../types/projectDetailType";
 
 const DEFAULT_STATE = {
-  projectInfo: {},
   projectList: [],
   member: [],
+
+  projectDetail: [],
 
   arrMember: [],
 
@@ -23,11 +26,6 @@ const DEFAULT_STATE = {
 export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
   const { type, payload } = action;
   switch (type) {
-    case SET_PROJECT_DETAIL: {
-      state.projectInfo = payload;
-      break;
-    }
-
     case SET_PROJECT_LIST: {
       state.projectList = payload;
       break;
@@ -55,6 +53,20 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
       break;
     }
 
+    case DELETE_MEMBER_PROJECT: {
+      const dataUpdate = [...state.projectList];
+      const index = dataUpdate.findIndex(
+        (item) => item.id === payload.projectId
+      );
+
+      const arrMembers = dataUpdate[index].members;
+      const idxMembers = arrMembers.findIndex(
+        (member) => member.userId === payload.userId
+      );
+      arrMembers.splice(idxMembers, 1);
+      break;
+    }
+
     case GET_ALL_PROJECT: {
       state.arrProject = payload;
       break;
@@ -64,8 +76,14 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
       state.arrMember = payload;
       break;
     }
+
     case GET_USER_BY_PROJECTID: {
       state.arrMember = payload;
+      break;
+    }
+
+    case SET_PROJECT_DETAIL_ARR: {
+      state.projectDetail = payload;
       break;
     }
 

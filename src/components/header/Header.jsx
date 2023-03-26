@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faJira } from "@fortawesome/free-brands-svg-icons";
-import { DownOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  SettingOutlined,
+  ExportOutlined,
+} from "@ant-design/icons";
 import {
   Menu,
   Button,
@@ -11,7 +15,6 @@ import {
   Input,
   Row,
   Select,
-  Space,
   Slider,
   InputNumber,
   notification,
@@ -212,23 +215,24 @@ export default function Header() {
       projectId: stateProjectId,
       typeId: value.typeId,
       priorityId: value.priorityId,
-      listUserAsign: [value.listUserAsign], //ok
+      listUserAsign: value.listUserAsign, //ok
     };
     console.log(data);
-    // try {
-    //   await createTaskApi(data);
-    //   Swal.fire({
-    //     title: "Tạo task thành công!",
-    //     text: "Hoàn tất!!",
-    //     icon: "success",
-    //     timer: 2000,
-    //     showConfirmButton: false,
-    //   });
-    // } catch (error) {
-    //   notification.error({
-    //     message: error.response.data.content,
-    //   });
-    // }
+
+    try {
+      await createTaskApi(data);
+      Swal.fire({
+        title: "Tạo task thành công!",
+        text: "Hoàn tất!!",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      notification.error({
+        message: error.response.data.content,
+      });
+    }
   };
 
   return (
@@ -280,13 +284,19 @@ export default function Header() {
               style={{ borderRadius: "50%", margin: "0 20px" }}
             />
             <div className="dropdown-menu dropdown-menu-right">
-              <p className="dropdown-item">{userStateReducer.userInfo.name}</p>
-              <button className="dropdown-item" type="button">
+              <p className="text-muted ml-4">
+                {userStateReducer.userInfo.name}
+              </p>
+              <button
+                onClick={() => navigate("/my-profile")}
+                className="dropdown-item"
+                type="button"
+              >
                 Profiles
               </button>
               <hr />
               <Button onClick={handleLogout} className="dropdown-item" danger>
-                Logout
+                Logout <ExportOutlined />
               </Button>
             </div>
           </div>
@@ -524,13 +534,18 @@ export default function Header() {
                 </Form.Item>
               </Col>
             </Row>
-            <button type="submit">submit</button>
-            <Space>
-              <Button onClick={onClose}>Cancel</Button>
+
+            <div className="text-right">
+              <Button type="text" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button className="ml-2 mr-2" htmlType="reset">
+                Reset
+              </Button>
               <Button htmlType="submit" type="primary">
                 Submit
               </Button>
-            </Space>
+            </div>
           </Form>
         </Drawer>
       </div>

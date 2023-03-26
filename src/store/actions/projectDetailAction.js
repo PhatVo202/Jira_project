@@ -2,25 +2,20 @@ import {
   fetchAllProjectApi,
   fetchProjectKeyApi,
   getAssignUserProjectApi,
+  fetchProjectDetailsApi,
 } from "../../servers/project";
 import { fetchGetUserApi, getUserProjectIdApi } from "../../servers/user";
 import {
+  DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
   GET_ALL_PROJECT,
   GET_USER_BY_PROJECTID,
   SET_MEMBER_INFO,
-  SET_PROJECT_DETAIL,
+  SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
 } from "../types/projectDetailType";
-
-export const setProjectDetailAction = (data) => {
-  return {
-    type: SET_PROJECT_DETAIL,
-    payload: data,
-  };
-};
 
 export const setProjectListAction = () => {
   return async (dispatch) => {
@@ -39,9 +34,9 @@ export const deleteProjectAction = (id) => {
   };
 };
 
-export const fiterProjectAction = (keyword) => {
+export const filterProjectAction = (keyword = "") => {
   return async (dispatch) => {
-    const result = await fetchProjectKeyApi((keyword = ""));
+    const result = await fetchProjectKeyApi(keyword);
 
     dispatch({
       type: FILTER_PROJECT,
@@ -67,7 +62,15 @@ export const setMemberInfoAction = (keyword, projectId) => {
 };
 
 //delete Member
-export const deleteMemberAction = () => {};
+export const deleteMemberAction = (projectId, userId) => {
+  return {
+    type: DELETE_MEMBER_PROJECT,
+    payload: {
+      projectId: projectId,
+      userId: userId,
+    },
+  };
+};
 
 export const setArrProjectAll = () => {
   return async (dispatch) => {
@@ -94,6 +97,16 @@ export const getMemberByProjectId = (projectId) => {
     const result = await getUserProjectIdApi(projectId);
     dispatch({
       type: GET_USER_BY_PROJECTID,
+      payload: result.data.content,
+    });
+  };
+};
+
+export const setProjectDetailArrAction = (id) => {
+  return async (dispatch) => {
+    const result = await fetchProjectDetailsApi(id);
+    dispatch({
+      type: SET_PROJECT_DETAIL_ARR,
       payload: result.data.content,
     });
   };

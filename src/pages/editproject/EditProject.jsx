@@ -2,14 +2,26 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/header/Header";
 import { Form, Input, Select, Button, Space } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "antd/es/form/Form";
-import { useNavigate } from "react-router-dom";
-import { updateProjectApi } from "../../servers/project";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  fetchProjectCategorylsApi,
+  fetchProjectDetailsApi,
+  updateProjectApi,
+} from "../../servers/project";
 import Swal from "sweetalert2";
+import { setProjectDetailAction } from "../../store/actions/projectDetailAction";
 
 export default function EditProject() {
   const navigate = useNavigate();
+  const param = useParams();
+  const dispatch = useDispatch();
+
+  const [stateCategory, setStateCategory] = useState();
+  const [stateDescription, setStateDescription] = useState();
+  const [stateCreator, setStateCreator] = useState();
+
   const [componentSize, setComponentSize] = useState("default");
   const projectDetailReducer = useSelector(
     (state) => state.projectDetailReducer
@@ -20,14 +32,28 @@ export default function EditProject() {
     setComponentSize(size);
   };
   useEffect(() => {
-    getProjectDetail();
+    if (param.id) {
+      getProjectDetail();
+    }
+  }, [param.id]);
+
+  useEffect(() => {
+    getProjectCategory();
   }, []);
 
-  const getProjectDetail = () => {
+  const getProjectCategory = async () => {
+    const result = await fetchProjectCategorylsApi();
+    setStateCategory(result.data.content);
+  };
+
+  const getProjectDetail = async () => {
+    const result = await fetchProjectDetailsApi(param.id);
+    setStateDescription(result.data.content.description);
+    setStateCreator(result.data.content.creator.id);
+    console.log(result.data.content);
     form.setFieldsValue({
-      id: projectDetailReducer.projectInfo.id,
-      projectName: projectDetailReducer.projectInfo.projectName,
-      categoryName: projectDetailReducer.projectInfo.categoryName,
+      id: result.data.content.id,
+      projectName: result.data.content.projectName,
     });
   };
 
@@ -35,7 +61,7 @@ export default function EditProject() {
     const data = {
       id: value.id,
       projectName: value.projectName,
-      creator: projectDetailReducer.projectInfo.creator.id,
+      creator: stateCreator,
       description: editoRef.current.getContent(),
       categoryId: value.categoryName,
     };
@@ -92,14 +118,18 @@ export default function EditProject() {
             </Form.Item>
             <Form.Item label="Project category" name="categoryName">
               <Select>
-                <Select.Option value="1">Dự án web</Select.Option>
-                <Select.Option value="2">Dự án phần mềm</Select.Option>
-                <Select.Option value="3">Dự án di động</Select.Option>
+                {stateCategory?.map((category, index) => {
+                  return (
+                    <Select.Option key={index} value={category.id}>
+                      {category.projectCategoryName}
+                    </Select.Option>
+                  );
+                })}
               </Select>
             </Form.Item>
             <Form.Item label="Description"></Form.Item>
             <Editor
-              initialValue={projectDetailReducer.projectInfo.projectName}
+              initialValue={stateDescription}
               onInit={(evt, editor) => (editoRef.current = editor)}
             />
 
