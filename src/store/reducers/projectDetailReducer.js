@@ -1,11 +1,15 @@
+import { notification } from "antd";
 import { data } from "jquery";
 import {
+  ADD_MEMBER_BOARD,
   DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
   GET_ALL_PROJECT,
   GET_USER_BY_PROJECTID,
+  REMOVE_MEMBER_BOARD,
+  SEARCH_MEMBER_BOARD,
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL,
   SET_PROJECT_DETAIL_ARR,
@@ -53,6 +57,23 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
       break;
     }
 
+    case ADD_MEMBER_BOARD: {
+      const data = [...state.projectDetail.members];
+
+      const index = data.findIndex((item) => item.userId === payload.userId);
+
+      if (index !== -1) {
+        notification.error({
+          message: "User đã được thêm rồi!",
+        });
+      } else {
+        data.push(...payload.members);
+      }
+      state.projectDetail.members = data;
+      console.log(state.projectDetail.members);
+      break;
+    }
+
     case DELETE_MEMBER_PROJECT: {
       const dataUpdate = [...state.projectList];
       const index = dataUpdate.findIndex(
@@ -64,6 +85,19 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
         (member) => member.userId === payload.userId
       );
       arrMembers.splice(idxMembers, 1);
+      break;
+    }
+
+    case REMOVE_MEMBER_BOARD: {
+      state.projectDetail.members = state.projectDetail.members.filter((item) =>
+        item.userId === payload ? false : true
+      );
+      break;
+    }
+
+    case SEARCH_MEMBER_BOARD: {
+      state.arrMember = payload;
+      console.log(payload);
       break;
     }
 

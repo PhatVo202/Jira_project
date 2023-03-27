@@ -6,12 +6,15 @@ import {
 } from "../../servers/project";
 import { fetchGetUserApi, getUserProjectIdApi } from "../../servers/user";
 import {
+  ADD_MEMBER_BOARD,
   DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
   GET_ALL_PROJECT,
   GET_USER_BY_PROJECTID,
+  REMOVE_MEMBER_BOARD,
+  SEARCH_MEMBER_BOARD,
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
@@ -61,6 +64,21 @@ export const setMemberInfoAction = (keyword, projectId) => {
   };
 };
 
+//add Member Board
+export const setMemberBoardAction = (id, userId) => {
+  return async (dispatch) => {
+    const result = await fetchGetUserApi(id);
+
+    dispatch({
+      type: ADD_MEMBER_BOARD,
+      payload: {
+        members: result.data.content,
+        userId: userId,
+      },
+    });
+  };
+};
+
 //delete Member
 export const deleteMemberAction = (projectId, userId) => {
   return {
@@ -69,6 +87,14 @@ export const deleteMemberAction = (projectId, userId) => {
       projectId: projectId,
       userId: userId,
     },
+  };
+};
+
+//delete Member board
+export const removeMemberBoard = (userId) => {
+  return {
+    type: REMOVE_MEMBER_BOARD,
+    payload: userId,
   };
 };
 
@@ -107,6 +133,18 @@ export const setProjectDetailArrAction = (id) => {
     const result = await fetchProjectDetailsApi(id);
     dispatch({
       type: SET_PROJECT_DETAIL_ARR,
+      payload: result.data.content,
+    });
+  };
+};
+
+//search Members Board
+
+export const searchMemberBoard = (keyword) => {
+  return async (dispatch) => {
+    const result = await fetchGetUserApi(keyword);
+    dispatch({
+      type: SEARCH_MEMBER_BOARD,
       payload: result.data.content,
     });
   };
