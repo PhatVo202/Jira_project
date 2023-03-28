@@ -217,7 +217,6 @@ export default function Header() {
       priorityId: value.priorityId,
       listUserAsign: value.listUserAsign, //ok
     };
-    console.log(data);
 
     try {
       await createTaskApi(data);
@@ -277,7 +276,7 @@ export default function Header() {
               data-toggle="dropdown"
               aria-haspopup="true"
               aria-expanded="false"
-              src={userStateReducer.userInfo.avatar}
+              src={userStateReducer?.userInfo?.avatar}
               alt=""
               width={30}
               height={30}
@@ -285,7 +284,7 @@ export default function Header() {
             />
             <div className="dropdown-menu dropdown-menu-right">
               <p className="text-muted ml-4">
-                {userStateReducer.userInfo.name}
+                {userStateReducer?.userInfo?.name}
               </p>
               <button
                 onClick={() => navigate("/my-profile")}
@@ -376,7 +375,7 @@ export default function Header() {
                   ]}
                 >
                   <Select placeholder="Please select an owner">
-                    {status.map((item, index) => {
+                    {status?.map((item, index) => {
                       return (
                         <Select.Option key={index} value={item.statusId}>
                           {item.statusName}
@@ -400,7 +399,7 @@ export default function Header() {
                   ]}
                 >
                   <Select placeholder="Please choose the approver">
-                    {priority.map((item, index) => {
+                    {priority?.map((item, index) => {
                       return (
                         <Select.Option key={index} value={item.priorityId}>
                           {item.priority}
@@ -422,7 +421,7 @@ export default function Header() {
                   ]}
                 >
                   <Select placeholder="Please choose the type">
-                    {taskType.map((item, index) => {
+                    {taskType?.map((item, index) => {
                       return (
                         <Select.Option key={index} value={item.id}>
                           {item.taskType}

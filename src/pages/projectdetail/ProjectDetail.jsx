@@ -34,8 +34,6 @@ export default function ProjectDetail() {
   const { projectDetail } = useSelector((state) => state.projectDetailReducer);
   const { arrMember } = useSelector((state) => state.projectDetailReducer);
 
-  console.log(projectDetail);
-
   const [modal2Open, setModal2Open] = useState(false);
   const [modal3Open, setModal3Open] = useState(false);
 
@@ -316,17 +314,19 @@ export default function ProjectDetail() {
                                 cursor: "pointer",
                               }}
                             >
-                              {taskDetail.assigness.map((assigness, index) => {
-                                return (
-                                  <Tooltip
-                                    title={assigness.name}
-                                    placement="top"
-                                    key={index}
-                                  >
-                                    <Avatar src={assigness.avatar}></Avatar>
-                                  </Tooltip>
-                                );
-                              })}
+                              {taskDetail?.assigness?.map(
+                                (assigness, index) => {
+                                  return (
+                                    <Tooltip
+                                      title={assigness.name}
+                                      placement="top"
+                                      key={index}
+                                    >
+                                      <Avatar src={assigness.avatar}></Avatar>
+                                    </Tooltip>
+                                  );
+                                }
+                              )}
                             </Avatar.Group>
                           </div>
                         </div>

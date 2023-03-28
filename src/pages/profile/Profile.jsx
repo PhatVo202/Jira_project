@@ -11,7 +11,6 @@ export default function Profile() {
   const navigate = useNavigate();
   const userhookState = useSelector((state) => state.userReducer);
   const [form] = useForm();
-  console.log(userhookState);
 
   useEffect(() => {
     getUserInfo();
@@ -39,7 +38,7 @@ export default function Profile() {
       phoneNumber: value.phoneNumber,
       passWord: value.passWord,
     };
-    console.log(data);
+
     await editUser(data);
     Swal.fire({
       title: "Cập nhật thành công!",

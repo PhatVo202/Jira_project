@@ -50,7 +50,6 @@ export default function EditProject() {
     const result = await fetchProjectDetailsApi(param.id);
     setStateDescription(result.data.content.description);
     setStateCreator(result.data.content.creator.id);
-    console.log(result.data.content);
     form.setFieldsValue({
       id: result.data.content.id,
       projectName: result.data.content.projectName,

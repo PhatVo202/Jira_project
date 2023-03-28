@@ -25,7 +25,6 @@ export default function CreateProject() {
 
   const getProjectCategory = async () => {
     const result = await fetchProjectCategorylsApi();
-    console.log(result);
     setDataCategory(result.data.content);
   };
 
@@ -103,7 +102,7 @@ export default function CreateProject() {
           </Form.Item>
           <Form.Item label="Project category" name="categoryName">
             <Select>
-              {dataCategory.map((item, index) => {
+              {dataCategory?.map((item, index) => {
                 return (
                   <Select.Option key={index} value={item.id}>
                     {item.projectCategoryName}

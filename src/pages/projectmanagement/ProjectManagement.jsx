@@ -114,7 +114,7 @@ export default function ProjectManagement() {
 
       key: 4,
       render: (text) => {
-        return <Tag color="purple">{text.creator.name}</Tag>;
+        return <Tag color="purple">{text?.creator?.name}</Tag>;
       },
     },
     {
@@ -201,7 +201,7 @@ export default function ProjectManagement() {
                 </Popover>
               );
             })}
-            {text.members?.length > 3 ? (
+            {text?.members?.length > 3 ? (
               <Popover
                 placement="topLeft"
                 title={"Members"}
@@ -218,7 +218,7 @@ export default function ProjectManagement() {
                         </tr>
                       </thead>
                       <tbody>
-                        {text.members?.slice(3, 100).map((item, index) => {
+                        {text?.members?.slice(3, 100).map((item, index) => {
                           return (
                             <tr key={index}>
                               <td>{item.userId}</td>
