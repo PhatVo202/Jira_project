@@ -46,13 +46,7 @@ export default function Router() {
     },
     {
       path: "/projectmanagement",
-      element: <AuthGuard />,
-      children: [
-        {
-          path: "/projectmanagement",
-          element: <ProjectManagement />,
-        },
-      ],
+      element: <ProjectManagement />,
     },
     {
       path: "/projectdetail/:id",
