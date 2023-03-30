@@ -2,18 +2,23 @@ import { notification } from "antd";
 import { data } from "jquery";
 import {
   ADD_MEMBER_BOARD,
+  DELETE_COMMENT,
   DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
   GET_ALL_PROJECT,
   GET_USER_BY_PROJECTID,
+  INSERT_COMMENT,
   REMOVE_MEMBER_BOARD,
+  REMOVE_TASK,
   SEARCH_MEMBER_BOARD,
+  SET_COMMENT_ALL,
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL,
   SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
+  SET_TASKDETAIL,
 } from "../types/projectDetailType";
 
 const DEFAULT_STATE = {
@@ -25,6 +30,9 @@ const DEFAULT_STATE = {
   arrMember: [],
 
   arrProject: [],
+
+  taskDetail: {},
+  commentList: [],
 };
 
 export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
@@ -118,6 +126,35 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
 
     case SET_PROJECT_DETAIL_ARR: {
       state.projectDetail = payload;
+      break;
+    }
+
+    case SET_TASKDETAIL: {
+      state.taskDetail = payload;
+      break;
+    }
+
+    case "SET_TASKDETAIL": {
+      state.taskDetail = payload;
+      break;
+    }
+
+    case SET_COMMENT_ALL: {
+      state.commentList = payload;
+      break;
+    }
+
+    case INSERT_COMMENT: {
+      const dataUpdate = [...state.commentList];
+      dataUpdate.push(payload);
+      state.commentList = dataUpdate;
+      break;
+    }
+
+    case DELETE_COMMENT: {
+      state.commentList = state.commentList.filter((item) =>
+        item.id === payload ? false : true
+      );
       break;
     }
 

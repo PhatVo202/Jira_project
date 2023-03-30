@@ -16,19 +16,43 @@ export default function Router() {
   const routing = useRoutes([
     {
       path: "/",
-      element: <Login />,
+      element: <NoAuthGuard />,
+      children: [
+        {
+          path: "/",
+          element: <Login />,
+        },
+      ],
     },
     {
       path: "/login",
-      element: <Login />,
+      element: <NoAuthGuard />,
+      children: [
+        {
+          path: "/login",
+          element: <Login />,
+        },
+      ],
     },
     {
       path: "/register",
-      element: <Register />,
+      element: <NoAuthGuard />,
+      children: [
+        {
+          path: "/register",
+          element: <Register />,
+        },
+      ],
     },
     {
       path: "/projectmanagement",
-      element: <ProjectManagement />,
+      element: <AuthGuard />,
+      children: [
+        {
+          path: "/projectmanagement",
+          element: <ProjectManagement />,
+        },
+      ],
     },
     {
       path: "/projectdetail/:id",

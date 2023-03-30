@@ -75,3 +75,58 @@ export const createTaskApi = (data) => {
     data: data,
   });
 };
+
+export const fetchTaskDetailApi = (id) => {
+  return axiosRequest({
+    url: `/Project/getTaskDetail?taskId=${id}`,
+    method: "GET",
+  });
+};
+
+export const removeTaskApi = (id) => {
+  return axiosRequest({
+    url: `/Project/removeTask?taskId=${id}`,
+    method: "DELETE",
+  });
+};
+
+//update Task
+export const updatePriorityApi = (data) => {
+  return axiosRequest({
+    url: "/Project/updatePriority",
+    method: "PUT",
+    data: data,
+  });
+};
+
+export const updateAssignUserTaskApi = (data) => {
+  return axiosRequest({
+    url: "/Project/assignUserTask",
+    method: "POST",
+    data: data,
+  });
+};
+
+export const updateEstimate = (data) => {
+  return axiosRequest({
+    url: "/Project/updateEstimate",
+    method: "PUT",
+    data: data,
+  });
+};
+
+export const updateTimeTracking = (data) => {
+  return axiosRequest({
+    url: "/Project/updateTimeTracking",
+    method: "PUT",
+    data: data,
+  });
+};
+
+export const updateStatus = (data) => {
+  return axiosRequest({
+    url: "/Project/updateStatus",
+    method: "PUT",
+    data: data,
+  });
+};

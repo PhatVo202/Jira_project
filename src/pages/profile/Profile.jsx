@@ -18,10 +18,10 @@ export default function Profile() {
 
   const getUserInfo = () => {
     form.setFieldsValue({
-      id: userhookState.userInfo.id,
-      email: userhookState.userInfo.email,
-      name: userhookState.userInfo.name,
-      phoneNumber: userhookState.userInfo.phoneNumber,
+      id: userhookState?.userInfo?.id,
+      email: userhookState?.userInfo?.email,
+      name: userhookState?.userInfo?.name,
+      phoneNumber: userhookState?.userInfo?.phoneNumber,
     });
   };
 
@@ -57,7 +57,7 @@ export default function Profile() {
           <div className="col-5">
             <Avatar
               style={{ width: "300px", height: "300px" }}
-              src={userhookState.userInfo.avatar}
+              src={userhookState?.userInfo?.avatar}
             />
           </div>
           <div className="col-7">

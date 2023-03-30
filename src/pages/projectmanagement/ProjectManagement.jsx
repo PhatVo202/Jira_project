@@ -304,8 +304,6 @@ export default function ProjectManagement() {
                         setValue(text);
                       }}
                       onSelect={async (valueSelect, option) => {
-                        console.log({ valueSelect: valueSelect });
-                        console.log({ option: option });
                         setValue(option.label);
                         const data = {
                           projectId: text.id,

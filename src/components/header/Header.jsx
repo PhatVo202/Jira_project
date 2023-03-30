@@ -232,6 +232,8 @@ export default function Header() {
         message: error.response.data.content,
       });
     }
+
+    setOpen(false);
   };
 
   return (

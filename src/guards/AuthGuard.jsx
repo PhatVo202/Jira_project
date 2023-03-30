@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import Login from "../pages/login/Login";
+import ProjectManagement from "../pages/projectmanagement/ProjectManagement";
 
 export default function AuthGuard() {
   const userState = useSelector((state) => state.userReducer);
@@ -16,5 +17,7 @@ export default function AuthGuard() {
     }
   }, []);
 
-  return <Outlet />;
+  const isLogin = !userState.userInfo ? <Outlet /> : <ProjectManagement />;
+
+  return isLogin;
 }
