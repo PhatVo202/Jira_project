@@ -11,6 +11,7 @@ import {
   DELETE_COMMENT,
   DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
+  EDIT_COMMENT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
   GET_ALL_PROJECT,
@@ -19,6 +20,7 @@ import {
   REMOVE_MEMBER_BOARD,
   SEARCH_MEMBER_BOARD,
   SET_COMMENT_ALL,
+  SET_DESCRIPTION,
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
@@ -186,9 +188,26 @@ export const inserCommentAction = (data) => {
   };
 };
 
+export const editCommentAction = (id, content) => {
+  return {
+    type: EDIT_COMMENT,
+    payload: {
+      id: id,
+      content: content,
+    },
+  };
+};
+
 export const deleteCommentAction = (id) => {
   return {
     type: DELETE_COMMENT,
     payload: id,
+  };
+};
+
+export const setDescriptionAction = (desc) => {
+  return {
+    type: SET_DESCRIPTION,
+    payload: desc,
   };
 };

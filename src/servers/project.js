@@ -107,7 +107,7 @@ export const updateAssignUserTaskApi = (data) => {
   });
 };
 
-export const updateEstimate = (data) => {
+export const updateEstimateApi = (data) => {
   return axiosRequest({
     url: "/Project/updateEstimate",
     method: "PUT",
@@ -115,7 +115,7 @@ export const updateEstimate = (data) => {
   });
 };
 
-export const updateTimeTracking = (data) => {
+export const updateTimeTrackingApi = (data) => {
   return axiosRequest({
     url: "/Project/updateTimeTracking",
     method: "PUT",
@@ -123,9 +123,25 @@ export const updateTimeTracking = (data) => {
   });
 };
 
-export const updateStatus = (data) => {
+export const updateStatusApi = (data) => {
   return axiosRequest({
     url: "/Project/updateStatus",
+    method: "PUT",
+    data: data,
+  });
+};
+
+export const updateDescriptionApi = (data) => {
+  return axiosRequest({
+    url: "/Project/updateDescription",
+    method: "PUT",
+    data: data,
+  });
+};
+
+export const updateTaskApi = (data) => {
+  return axiosRequest({
+    url: "/Project/updateTask",
     method: "PUT",
     data: data,
   });

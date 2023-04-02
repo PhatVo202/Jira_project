@@ -206,16 +206,16 @@ export default function Header() {
 
   const handleFinish = async (value) => {
     const data = {
-      taskName: value.taskName, //ok
-      description: editoRef.current.getContent(), //ok
-      statusId: value.statusId, //ok ?
+      taskName: value.taskName,
+      description: editoRef.current.getContent(),
+      statusId: value.statusId,
       originalEstimate: value.originalEstimate,
       timeTrackingSpent: timeTracking.timeTrackingSpent,
       timeTrackingRemaining: timeTracking.timeTrackingRemaining,
       projectId: stateProjectId,
       typeId: value.typeId,
       priorityId: value.priorityId,
-      listUserAsign: value.listUserAsign, //ok
+      listUserAsign: value.listUserAsign,
     };
 
     try {
@@ -245,7 +245,8 @@ export default function Header() {
           mode="horizontal"
           items={items}
         />
-        <div>
+
+        <div className="text-right">
           <div className="btn-group">
             <SettingOutlined
               className=" dropdown-toggle"
@@ -307,7 +308,7 @@ export default function Header() {
       <div>
         <Drawer
           title="Create Task"
-          width={720}
+          width={480}
           onClose={onClose}
           open={open}
           bodyStyle={{
@@ -451,10 +452,8 @@ export default function Header() {
                     options={userOptions}
                     style={{ width: "100%" }}
                     placeholder="select one country"
+                    onSelect={(value) => console.log(value)}
                     optionFilterProp="label"
-                    onSelect={(value) => {
-                      console.log(value);
-                    }}
                   ></Select>
                 </Form.Item>
               </Col>

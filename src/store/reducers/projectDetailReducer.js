@@ -5,6 +5,7 @@ import {
   DELETE_COMMENT,
   DELETE_MEMBER_PROJECT,
   DELETE_PROJECT,
+  EDIT_COMMENT,
   FILTER_PROJECT,
   GET_ALL_MEMBER,
   GET_ALL_PROJECT,
@@ -14,6 +15,7 @@ import {
   REMOVE_TASK,
   SEARCH_MEMBER_BOARD,
   SET_COMMENT_ALL,
+  SET_DESCRIPTION,
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL,
   SET_PROJECT_DETAIL_ARR,
@@ -151,10 +153,22 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
       break;
     }
 
+    case EDIT_COMMENT: {
+      const dataUpdate = [...state.commentList];
+      const index = dataUpdate.findIndex((item) => item.id === payload.id);
+
+      dataUpdate[index].contentComment = payload.content;
+    }
+
     case DELETE_COMMENT: {
       state.commentList = state.commentList.filter((item) =>
         item.id === payload ? false : true
       );
+      break;
+    }
+
+    case SET_DESCRIPTION: {
+      state.taskDetail.description = payload;
       break;
     }
 

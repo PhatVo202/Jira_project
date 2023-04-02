@@ -11,6 +11,8 @@ import {
   notification,
   Popover,
   Space,
+  List,
+  Tooltip,
 } from "antd";
 import {
   deleteProjectApi,
@@ -31,6 +33,7 @@ import {
 } from "../../store/actions/projectDetailAction";
 import { useProjectAll } from "../../hooks/useAllProject";
 import { LoadingContext } from "../../contexts/loading/LoadingContext";
+import { useMediaQuery } from "react-responsive";
 
 export default function ProjectManagement() {
   const dispatch = useDispatch();
@@ -52,6 +55,8 @@ export default function ProjectManagement() {
     dispatch(setProjectListAction());
     setLoadingState({ isLoading: false });
   };
+
+  const isMobile = useMediaQuery({ query: `(max-width :624px)` });
 
   const columns = [
     {
@@ -86,6 +91,7 @@ export default function ProjectManagement() {
           </NavLink>
         );
       },
+      responive: ["sm"],
     },
     {
       title: "Category name",
@@ -114,7 +120,7 @@ export default function ProjectManagement() {
 
       key: 4,
       render: (text) => {
-        return <Tag color="purple">{text?.creator?.name}</Tag>;
+        return <Tag color="green">{text?.creator?.name}</Tag>;
       },
     },
     {
@@ -413,7 +419,94 @@ export default function ProjectManagement() {
             onSearch={handleSearch}
           />
 
-          <Table columns={columns} dataSource={listAllProject.projectList} />
+          {isMobile ? (
+            <List
+              pagination={("bottom", "center")}
+              dataSource={listAllProject.projectList}
+              renderItem={(item, index) => (
+                <List.Item key={index}>
+                  <List.Item.Meta
+                    avatar={
+                      <div>
+                        <p>ProjectName</p>
+                        <p>Category Name</p>
+                        <p>Creator</p>
+                        <p>Members</p>
+                        <p>Actions</p>
+                      </div>
+                    }
+                    description={
+                      <div className="text-center">
+                        <p>
+                          <NavLink to={`/projectdetail/${item.id}`}>
+                            {item.projectName}
+                          </NavLink>
+                        </p>
+                        <p>{item.categoryName}</p>
+                        <p>
+                          <Tag color="green">{item.creator.name}</Tag>
+                        </p>
+                        <Avatar.Group
+                          maxCount={2}
+                          maxStyle={{
+                            color: "#f56a00",
+                            backgroundColor: "#fde3cf",
+                            cursor: "pointer",
+                            size: "small",
+                          }}
+                        >
+                          {item?.members?.map((member, index) => {
+                            return (
+                              <Tooltip title={member.name} key={index}>
+                                <Avatar src={member.avatar} />
+                              </Tooltip>
+                            );
+                          })}
+                        </Avatar.Group>
+                        <br />
+                        <div>
+                          <EditOutlined
+                            onClick={() => {
+                              navigate(`/edit/${item.id}`);
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              color: "blue",
+                              width: "40px",
+                              height: "20px",
+                            }}
+                          />
+                          <DeleteOutlined
+                            onClick={async () => {
+                              try {
+                                await deleteProjectApi(item.id);
+                                dispatch(deleteProjectAction(item.id));
+                                notification.success({
+                                  message: "Xoá thành công!",
+                                });
+                              } catch (error) {
+                                notification.error({
+                                  message: error.response.data.content,
+                                });
+                              }
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              color: "red",
+                              width: "40px",
+                              height: "20px",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Table columns={columns} dataSource={listAllProject.projectList} />
+          )}
         </div>
       </div>
     </div>

@@ -27,17 +27,21 @@ import {
   removeTaskApi,
   removeUserFromProjectApi,
   updateAssignUserTaskApi,
-  updateEstimate,
+  updateDescriptionApi,
+  updateEstimateApi,
   updatePriorityApi,
-  updateStatus,
-  updateTimeTracking,
+  updateStatusApi,
+  updateTaskApi,
+  updateTimeTrackingApi,
 } from "../../servers/project";
 import {
   deleteCommentAction,
+  editCommentAction,
   inserCommentAction,
   removeMemberBoard,
   searchMemberBoard,
   setAllComment,
+  setDescriptionAction,
   setMemberBoardAction,
   setProjectDetailArrAction,
   setTaskDetail,
@@ -54,7 +58,7 @@ import { DeleteOutlined, CheckOutlined } from "@ant-design/icons";
 import { fetchPriorityApi } from "../../servers/priority";
 import { useForm } from "antd/es/form/Form";
 import parse from "html-react-parser";
-import { deleteCommentApi } from "../../servers/comment";
+import { deleteCommentApi, updateCommentApi } from "../../servers/comment";
 
 const { Panel } = Collapse;
 
@@ -66,7 +70,6 @@ export default function ProjectDetail() {
   const { arrMember } = useSelector((state) => state.projectDetailReducer);
   const { taskDetail } = useSelector((state) => state.projectDetailReducer);
   const { commentList } = useSelector((state) => state.projectDetailReducer);
-  console.log(commentList);
 
   const [statusName, setStatusName] = useState();
   const [statusAll, setStatusAll] = useState();
@@ -83,16 +86,10 @@ export default function ProjectDetail() {
     return { label: item.name, value: item.userId };
   });
 
+  const [editComment, setEditComment] = useState();
+  const [listUser, setListUser] = useState();
+
   const editoRef = useRef();
-
-  // const memberOption = taskDetail?.assigness?.map((item) => {
-  //   return item.name;
-  // });
-  // console.log(memberOption);
-
-  // const memberProjectOption = projectDetail?.members?.map((item) => {
-  //   return { label: item.name, value: item.userId };
-  // });
 
   useEffect(() => {
     getTaskTypeAll();
@@ -144,7 +141,6 @@ export default function ProjectDetail() {
       taskId: taskId,
       contentComment: editoRef.current.getContent(),
     };
-    console.log(data);
 
     dispatch(inserCommentAction(data));
   };
@@ -510,14 +506,32 @@ export default function ProjectDetail() {
                 className="form-group"
                 style={{ height: "150px", overflowY: "scroll" }}
               >
-                {/* <Editor /> */}
-
-                <div className="text-right mt-2">
-                  <Button className="mr-2" type="primary">
-                    Save
-                  </Button>
-                  <Button>Cancel</Button>
-                </div>
+                <Collapse className="collapse__bg-hover" size="small" ghost>
+                  <Panel
+                    header={<p>{taskDetail?.description}</p>}
+                    showArrow={false}
+                    key={2}
+                  >
+                    <Editor
+                      onInit={(evt, editor) => (editoRef.current = editor)}
+                      onChange={async (value) => {
+                        const data = {
+                          taskId: taskDetail.taskId,
+                          description: value.level.content,
+                        };
+                        await updateDescriptionApi(data);
+                        dispatch(setDescriptionAction(value.level.content));
+                      }}
+                      initialValue={taskDetail?.description}
+                    />
+                    <div className="text-right mt-2">
+                      <Button className="mr-2" type="primary">
+                        Save
+                      </Button>
+                      <Button>Cancel</Button>
+                    </div>
+                  </Panel>
+                </Collapse>
               </div>
               <h6>Comment</h6>
               <div
@@ -526,7 +540,7 @@ export default function ProjectDetail() {
               >
                 <div className="row mb-3">
                   <div className="col-1">
-                    <Avatar src={userInfo.avatar} />
+                    <Avatar src={userInfo?.avatar} />
                   </div>
                   <div className="col-11">
                     <Collapse accordion={true} size="small" ghost>
@@ -558,15 +572,45 @@ export default function ProjectDetail() {
                     <React.Fragment key={index}>
                       <div className="row">
                         <div className="col-1">
-                          <Avatar src={comment?.user?.avatar} />
+                          <Avatar src={comment.user?.avatar} />
                         </div>
                         <div className="col-11">
-                          <span>{comment?.user?.name}</span>
+                          <span>{comment.user?.name}</span>
                           <p className="mr-4 ">
                             {parse(comment?.contentComment)}
                           </p>
                           <div className="d-flex">
-                            <p className="text-comment mr-3">Edit</p>
+                            <Collapse ghost>
+                              <Panel
+                                showArrow={false}
+                                header={
+                                  <p className="text-comment mr-3">Edit</p>
+                                }
+                              >
+                                <Editor
+                                  onChange={(value) => {
+                                    setEditComment(value.level.content);
+                                    console.log(value.level.content);
+                                  }}
+                                  onInit={(evt, editor) =>
+                                    (editoRef.current = editor)
+                                  }
+                                />
+                                <Button
+                                  onClick={async () => {
+                                    dispatch(
+                                      editCommentAction(comment.id, editComment)
+                                    );
+                                    await updateCommentApi(
+                                      comment.id,
+                                      editComment
+                                    );
+                                  }}
+                                >
+                                  <CheckOutlined />
+                                </Button>
+                              </Panel>
+                            </Collapse>
                             <Popconfirm
                               placement="topLeft"
                               title="'Are you sure to delete this task?'"
@@ -598,7 +642,7 @@ export default function ProjectDetail() {
                     statusId: value,
                   };
 
-                  await updateStatus(data);
+                  await updateStatusApi(data);
                   dispatch(setProjectDetailArrAction(param.id));
                 }}
                 // onChange={(value) => console.log(value)}
@@ -627,24 +671,26 @@ export default function ProjectDetail() {
                         // defaultValue={memberOptions}
                         // value={membersOptions}
                         // value={membersOptions}
-                        onChange={(value) =>
-                          console.log("thay doi value:", value)
-                        }
+                        defaultValue={membersOptions}
                         onDeselect={(e) => console.log(e)}
                         placeholder={taskDetail?.assigness?.name}
                         onSelect={async (value) => {
                           const data = {
+                            listUserAsign: value,
                             taskId: taskDetail.taskId,
-                            userId: value,
+                            taskName: taskDetail.taskName,
+                            description: taskDetail.description,
+                            taskDetail: taskDetail.statusId,
+                            originalEstimate: taskDetail.originalEstimate,
+                            timeTrackingSpent: taskDetail.timeTrackingSpent,
+                            timeTrackingRemaining:
+                              taskDetail.timeTrackingRemaining,
+                            projectId: param.id,
+                            typeId: taskDetail.typeId,
+                            priorityId: taskDetail.priorityId,
                           };
-                          try {
-                            await updateAssignUserTaskApi(data);
-                            dispatch(setProjectDetailArrAction(param.id));
-                          } catch (error) {
-                            notification.error({
-                              message: error.response.data.content,
-                            });
-                          }
+
+                          setListUser(data);
                         }}
                       >
                         {projectDetail?.members?.map((item, index) => {
@@ -655,6 +701,20 @@ export default function ProjectDetail() {
                           );
                         })}
                       </Select>
+                      <Button
+                        onClick={async () => {
+                          try {
+                            await updateTaskApi(listUser);
+                            dispatch(setProjectDetailArrAction(param.id));
+                          } catch (error) {
+                            notification.error({
+                              message: error.response.data.content,
+                            });
+                          }
+                        }}
+                      >
+                        Update
+                      </Button>
                     </div>
 
                     <div className="col-4 mt-2">
@@ -698,7 +758,7 @@ export default function ProjectDetail() {
                                 taskId: taskDetail.taskId,
                                 originalEstimate: estimate,
                               };
-                              await updateEstimate(data);
+                              await updateEstimateApi(data);
                               dispatch(setProjectDetailArrAction(param.id));
                             }}
                           >
@@ -737,6 +797,19 @@ export default function ProjectDetail() {
                           Number(taskDetail.timeTrackingRemaining)
                         }
                       />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <p className="font-weight-bold">
+                          {taskDetail.timeTrackingSpent}m logged
+                        </p>
+                        <p className="font-weight-bold">
+                          {taskDetail.timeTrackingRemaining}m remaining
+                        </p>
+                      </div>
                       <p>
                         The original estimate for this issue was{" "}
                         <span>{taskDetail.originalEstimate}</span> m.
@@ -751,7 +824,7 @@ export default function ProjectDetail() {
                               timeTrackingRemaining:
                                 value.timeTrackingRemaining,
                             };
-                            await updateTimeTracking(data);
+                            await updateTimeTrackingApi(data);
                             dispatch(setProjectDetailArrAction(param.id));
                             setModal3Open(false);
                           }}

@@ -1,4 +1,14 @@
-import { Modal, Input, Table, Button, Form, notification } from "antd";
+import {
+  Modal,
+  Input,
+  Table,
+  Button,
+  Form,
+  notification,
+  Avatar,
+  Tooltip,
+  List,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/header/Header";
@@ -10,6 +20,8 @@ import {
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { deleteUser, editUser } from "../../servers/user";
+import { useMediaQuery } from "react-responsive";
+import { NavLink } from "react-router-dom";
 
 export default function UserManagement() {
   const [form] = useForm();
@@ -128,11 +140,12 @@ export default function UserManagement() {
     dispatch(filterData(keyword));
   };
 
+  const isMobile = useMediaQuery({ query: `(max-width: 624px)` });
+
   return (
     <div>
       <Header />
       <div className="container py-5">
-        <Button>Create User</Button>
         <div>
           <Input.Search
             placeholder="Search here"
@@ -140,7 +153,101 @@ export default function UserManagement() {
             onSearch={handleSearch}
             onChange
           />
-          <Table columns={columns} dataSource={userList.listUser} />
+          {isMobile ? (
+            <List
+              pagination={("bottom", "center")}
+              dataSource={userList.listUser}
+              renderItem={(item, index) => (
+                <List.Item key={index}>
+                  <List.Item.Meta
+                    avatar={
+                      <div>
+                        <p>Name</p>
+                        <p> User ID</p>
+                        <p>Email</p>
+                        <p>Phone Number</p>
+                        <p>Actions</p>
+                      </div>
+                    }
+                    description={
+                      <div className="text-center">
+                        <p>{item.name}</p>
+                        <p>{item.userId}</p>
+                        <p>{item.email}</p>
+                        <p>{item.phoneNumber}</p>
+                        <Avatar.Group
+                          maxCount={2}
+                          maxStyle={{
+                            color: "#f56a00",
+                            backgroundColor: "#fde3cf",
+                            cursor: "pointer",
+                            size: "small",
+                          }}
+                        >
+                          {item?.members?.map((member, index) => {
+                            return (
+                              <Tooltip title={member.name} key={index}>
+                                <Avatar src={member.avatar} />
+                              </Tooltip>
+                            );
+                          })}
+                        </Avatar.Group>
+                        <div>
+                          <EditOutlined
+                            style={{
+                              color: "blue",
+                              fontSize: "17px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setValues({
+                                userId: item.userId,
+                                name: item.name,
+                                phoneNumber: item.phoneNumber,
+                                email: item.email,
+                              });
+                              form.setFieldsValue({
+                                userId: item.userId,
+                                name: item.name,
+                                phoneNumber: item.phoneNumber,
+                                email: item.email,
+                              });
+                              setModal2Open(true);
+                            }}
+                          />
+                          <DeleteOutlined
+                            onClick={async () => {
+                              try {
+                                await deleteUser(item.userId);
+                                notification.success({
+                                  message: "Xoá thành công!",
+                                });
+                                dispatch(
+                                  setUserManagementAction("", item.userId)
+                                );
+                              } catch (error) {
+                                notification.error({
+                                  message: error.response.data.content,
+                                });
+                              }
+                            }}
+                            style={{
+                              color: "red",
+                              marginLeft: "20px",
+                              fontSize: "17px",
+                              cursor: "pointer",
+                            }}
+                          />
+                        </div>
+                      </div>
+                    }
+                  />
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Table columns={columns} dataSource={userList.listUser} />
+          )}
         </div>
       </div>
       <Modal

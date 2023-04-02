@@ -1,11 +1,14 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
 import AuthGuard from "../guards/AuthGuard";
+import AuthGuardProfile from "../guards/AuthGuardProfile";
+import AuthGuardProjectDetail from "../guards/AuthGuardProjectDetail";
 import NoAuthGuard from "../guards/NoAuthGuard";
 import CreateProject from "../pages/createproject/CreateProject";
 import EditProject from "../pages/editproject/EditProject";
 
 import Login from "../pages/login/Login";
+import PageNotFound from "../pages/pageNotFound/PageNotFound";
 import Profile from "../pages/profile/Profile";
 import ProjectDetail from "../pages/projectdetail/ProjectDetail";
 import ProjectManagement from "../pages/projectmanagement/ProjectManagement";
@@ -56,7 +59,13 @@ export default function Router() {
     },
     {
       path: "/projectdetail/:id",
-      element: <ProjectDetail />,
+      element: <AuthGuardProjectDetail />,
+      children: [
+        {
+          path: "/projectdetail/:id",
+          element: <ProjectDetail />,
+        },
+      ],
     },
     {
       path: "/edit/:id",
@@ -68,11 +77,21 @@ export default function Router() {
     },
     {
       path: "/my-profile",
-      element: <Profile />,
+      element: <AuthGuardProfile />,
+      children: [
+        {
+          path: "/my-profile",
+          element: <Profile />,
+        },
+      ],
     },
     {
       path: "/user",
       element: <UserManagement />,
+    },
+    {
+      path: "*",
+      element: <PageNotFound />,
     },
   ]);
 
