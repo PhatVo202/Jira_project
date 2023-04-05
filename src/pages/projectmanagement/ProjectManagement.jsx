@@ -31,7 +31,6 @@ import {
   setProjectDetailArrAction,
   setProjectListAction,
 } from "../../store/actions/projectDetailAction";
-import { useProjectAll } from "../../hooks/useAllProject";
 import { LoadingContext } from "../../contexts/loading/LoadingContext";
 import { useMediaQuery } from "react-responsive";
 
@@ -45,15 +44,17 @@ export default function ProjectManagement() {
   const [_, setLoadingState] = useContext(LoadingContext);
 
   useEffect(() => {
+    setTimeout(() => {
+      setLoadingState({ isLoading: true });
+    }, 200);
     getAllProject();
+    setTimeout(() => {
+      setLoadingState({ isLoading: false });
+    }, 2000);
   }, []);
 
-  const dataProject = useProjectAll();
-
   const getAllProject = () => {
-    setLoadingState({ isLoading: true });
     dispatch(setProjectListAction());
-    setLoadingState({ isLoading: false });
   };
 
   const isMobile = useMediaQuery({ query: `(max-width :624px)` });

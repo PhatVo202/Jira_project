@@ -1,8 +1,6 @@
 import React from "react";
 import { useRoutes } from "react-router-dom";
 import AuthGuard from "../guards/AuthGuard";
-import AuthGuardProfile from "../guards/AuthGuardProfile";
-import AuthGuardProjectDetail from "../guards/AuthGuardProjectDetail";
 import NoAuthGuard from "../guards/NoAuthGuard";
 import CreateProject from "../pages/createproject/CreateProject";
 import EditProject from "../pages/editproject/EditProject";
@@ -59,13 +57,7 @@ export default function Router() {
     },
     {
       path: "/projectdetail/:id",
-      element: <AuthGuardProjectDetail />,
-      children: [
-        {
-          path: "/projectdetail/:id",
-          element: <ProjectDetail />,
-        },
-      ],
+      element: <ProjectDetail />,
     },
     {
       path: "/edit/:id",
@@ -77,13 +69,7 @@ export default function Router() {
     },
     {
       path: "/my-profile",
-      element: <AuthGuardProfile />,
-      children: [
-        {
-          path: "/my-profile",
-          element: <Profile />,
-        },
-      ],
+      element: <Profile />,
     },
     {
       path: "/user",

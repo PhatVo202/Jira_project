@@ -18,7 +18,7 @@ import {
 } from "antd";
 import "./style.scss";
 import Search from "antd/es/input/Search";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useParams } from "react-router-dom";
 import Header from "../../components/header/Header";
@@ -26,7 +26,6 @@ import {
   getAssignUserProjectApi,
   removeTaskApi,
   removeUserFromProjectApi,
-  updateAssignUserTaskApi,
   updateDescriptionApi,
   updateEstimateApi,
   updatePriorityApi,
@@ -59,7 +58,8 @@ import { fetchPriorityApi } from "../../servers/priority";
 import { useForm } from "antd/es/form/Form";
 import parse from "html-react-parser";
 import { deleteCommentApi, updateCommentApi } from "../../servers/comment";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { LoadingContext } from "../../contexts/loading/LoadingContext";
 
 const { Panel } = Collapse;
 
@@ -83,15 +83,20 @@ export default function ProjectDetail() {
   const [form] = useForm();
   const [estimate, setEstimate] = useState();
 
-  const membersOptions = taskDetail?.assigness?.map((item) => {
-    return { label: item.name, value: item.userId };
-  });
-
   const [editComment, setEditComment] = useState();
   const [listUser, setListUser] = useState();
 
   const editoRef = useRef();
 
+  const [_, setLoadingState] = useContext(LoadingContext);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoadingState({ isLoading: true });
+    }, 200);
+    setTimeout(() => {
+      setLoadingState({ isLoading: false });
+    }, 1500);
+  }, []);
   useEffect(() => {
     getTaskTypeAll();
     getStatus();
@@ -144,6 +149,26 @@ export default function ProjectDetail() {
     };
 
     dispatch(inserCommentAction(data));
+  };
+
+  const handleDragEnd = (result) => {
+    let { source, destination } = result;
+    if (!destination) {
+      return;
+    }
+    if (
+      source.index === destination.index &&
+      source.droppableId === destination.droppableId
+    ) {
+      return;
+    }
+
+    const dataUpdateStatus = {
+      taskId: Number(result.draggableId),
+      statusId: destination.droppableId,
+    };
+
+    dispatch(updateStatusApi(dataUpdateStatus, param.id));
   };
 
   return (
@@ -334,124 +359,160 @@ export default function ProjectDetail() {
           </div>
         </div>
 
-        <div className="row">
-          {projectDetail?.lstTask?.map((item, index) => {
-            return (
-              <div
-                className="col-12 col-sm-6 mt-3 col-lg-3 mt-lg-0 col-xl-3"
-                key={index}
-              >
-                <div
-                  onClick={() => {
-                    setStatusName(item.statusName);
-                    dispatch(setProjectDetailArrAction(param.id));
-                  }}
-                  className="bg-light pl-2 pt-2 font-weight-bold"
-                  style={{
-                    // height: "500px",
-                    maxHeight: "500px",
-                    cursor: "grab",
-                  }}
-                >
-                  <Tag color={changeColors(item.statusName)} className="mb-2">
-                    {item.statusName}
-                  </Tag>
-                  {item.lstTaskDeTail.map((taskDetail, index) => {
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <div className="row">
+            {projectDetail?.lstTask?.map((item, index) => {
+              return (
+                <Droppable droppableId={item.statusId}>
+                  {(provided) => {
                     return (
                       <div
-                        draggable="true"
-                        onClick={() => {
-                          dispatch(setTaskDetail(taskDetail.taskId));
-                          setModal3Open(true);
-                          form.setFieldsValue({
-                            originalEstimate: taskDetail.originalEstimate,
-                            timeTrackingRemaining:
-                              taskDetail.timeTrackingRemaining,
-                          });
-                          dispatch(setAllComment(taskDetail.taskId));
-                        }}
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        className="col-12 col-sm-6 mt-3 col-lg-3 mt-lg-0 col-xl-3"
                         key={index}
-                        className="card px-2 mt-2 bg-white mx-1"
                       >
                         <div
+                          onClick={() => {
+                            setStatusName(item.statusName);
+                            dispatch(setProjectDetailArrAction(param.id));
+                          }}
+                          className="bg-light pl-2 pt-2 font-weight-bold"
                           style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
+                            // height: "500px",
+                            maxHeight: "500px",
+                            cursor: "grab",
                           }}
                         >
-                          <div>
-                            <p style={{ fontWeight: 400 }}>
-                              {taskDetail.taskName}
-                            </p>
-                            {taskDetail.taskTypeDetail.taskType ===
-                            TaskType.bug ? (
-                              <FontAwesomeIcon
-                                icon={faCircle}
-                                style={{
-                                  background: "#e54a39",
-                                  color: "white",
-                                  border: "none",
-                                  padding: "4px 4px",
-                                  fontSize: "7px",
-                                  marginRight: "5px",
-                                  borderRadius: "3px",
-                                }}
-                              />
-                            ) : (
-                              <FontAwesomeIcon
-                                icon={faCheck}
-                                style={{
-                                  background: "#4cace8",
-                                  color: "white",
-                                  border: "none",
-                                  padding: "1px 1px",
-                                  fontSize: "12px",
-                                  marginRight: "5px",
-                                  borderRadius: "3px",
-                                }}
-                              />
-                            )}
-
-                            <Tag color="red" className="text-danger">
-                              {taskDetail.priorityTask.priority}
-                            </Tag>
-                          </div>
-                          <div className="mt-5">
-                            <Avatar.Group
-                              maxCount={2}
-                              size="small"
-                              maxPopoverTrigger="hover"
-                              maxStyle={{
-                                color: "#f56a00",
-                                backgroundColor: "#fde3cf",
-                                cursor: "pointer",
-                              }}
-                            >
-                              {taskDetail?.assigness?.map(
-                                (assigness, index) => {
+                          <Tag
+                            color={changeColors(item.statusName)}
+                            className="mb-2"
+                          >
+                            {item.statusName}
+                          </Tag>
+                          {item.lstTaskDeTail.map((taskDetail, index) => {
+                            return (
+                              <Draggable
+                                index={index}
+                                key={taskDetail.taskId.toString()}
+                                draggableId={taskDetail.taskId.toString()}
+                              >
+                                {(provided) => {
                                   return (
-                                    <Tooltip
-                                      title={assigness.name}
-                                      placement="top"
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                      onClick={() => {
+                                        dispatch(
+                                          setTaskDetail(taskDetail.taskId)
+                                        );
+                                        setModal3Open(true);
+                                        form.setFieldsValue({
+                                          originalEstimate:
+                                            taskDetail.originalEstimate,
+                                          timeTrackingRemaining:
+                                            taskDetail.timeTrackingRemaining,
+                                        });
+                                        dispatch(
+                                          setAllComment(taskDetail.taskId)
+                                        );
+                                      }}
                                       key={index}
+                                      className="card px-2 mt-2 bg-white mx-1"
                                     >
-                                      <Avatar src={assigness.avatar}></Avatar>
-                                    </Tooltip>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <div>
+                                          <p style={{ fontWeight: 400 }}>
+                                            {taskDetail.taskName}
+                                          </p>
+                                          {taskDetail.taskTypeDetail
+                                            .taskType === TaskType.bug ? (
+                                            <FontAwesomeIcon
+                                              icon={faCircle}
+                                              style={{
+                                                background: "#e54a39",
+                                                color: "white",
+                                                border: "none",
+                                                padding: "4px 4px",
+                                                fontSize: "7px",
+                                                marginRight: "5px",
+                                                borderRadius: "3px",
+                                              }}
+                                            />
+                                          ) : (
+                                            <FontAwesomeIcon
+                                              icon={faCheck}
+                                              style={{
+                                                background: "#4cace8",
+                                                color: "white",
+                                                border: "none",
+                                                padding: "1px 1px",
+                                                fontSize: "12px",
+                                                marginRight: "5px",
+                                                borderRadius: "3px",
+                                              }}
+                                            />
+                                          )}
+
+                                          <Tag
+                                            color="red"
+                                            className="text-danger"
+                                          >
+                                            {taskDetail.priorityTask.priority}
+                                          </Tag>
+                                        </div>
+                                        <div className="mt-5">
+                                          <Avatar.Group
+                                            maxCount={2}
+                                            size="small"
+                                            maxPopoverTrigger="hover"
+                                            maxStyle={{
+                                              color: "#f56a00",
+                                              backgroundColor: "#fde3cf",
+                                              cursor: "pointer",
+                                            }}
+                                          >
+                                            {taskDetail?.assigness?.map(
+                                              (assigness, index) => {
+                                                return (
+                                                  <Tooltip
+                                                    title={assigness.name}
+                                                    placement="top"
+                                                    key={index}
+                                                  >
+                                                    <Avatar
+                                                      src={assigness.avatar}
+                                                    ></Avatar>
+                                                  </Tooltip>
+                                                );
+                                              }
+                                            )}
+                                          </Avatar.Group>
+                                        </div>
+                                      </div>
+                                    </div>
                                   );
-                                }
-                              )}
-                            </Avatar.Group>
-                          </div>
+                                }}
+                              </Draggable>
+                            );
+                          })}
+                          {provided.placeholder}
                         </div>
                       </div>
                     );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                  }}
+                </Droppable>
+              );
+            })}
+          </div>
+        </DragDropContext>
       </div>
 
       <Modal

@@ -10,7 +10,7 @@ import {
   List,
   Breadcrumb,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "../../components/header/Header";
 
@@ -18,24 +18,27 @@ import {
   filterData,
   setUserManagementAction,
 } from "../../store/actions/userManagementAction";
-import {
-  EditOutlined,
-  DeleteOutlined,
-  HomeOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, UserOutlined } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { deleteUser, editUser } from "../../servers/user";
 import { useMediaQuery } from "react-responsive";
 import { NavLink } from "react-router-dom";
+import { LoadingContext } from "../../contexts/loading/LoadingContext";
 
 export default function UserManagement() {
   const [form] = useForm();
+  const [_, setLoadingState] = useContext(LoadingContext);
   const [values, setValues] = useState({});
   const userList = useSelector((state) => state.userManagementReducer);
   const dispatch = useDispatch();
   useEffect(() => {
+    setTimeout(() => {
+      setLoadingState({ isLoading: true });
+    }, 200);
     getUserList();
+    setTimeout(() => {
+      setLoadingState({ isLoading: false });
+    }, 2000);
   }, []);
   const [modal2Open, setModal2Open] = useState(false);
   const getUserList = async () => {

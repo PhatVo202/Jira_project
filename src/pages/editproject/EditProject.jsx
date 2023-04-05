@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/header/Header";
 import { Form, Input, Select, Button, Space, Breadcrumb } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "antd/es/form/Form";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import {
@@ -11,21 +10,17 @@ import {
   updateProjectApi,
 } from "../../servers/project";
 import Swal from "sweetalert2";
-import { setProjectDetailAction } from "../../store/actions/projectDetailAction";
 
 export default function EditProject() {
   const navigate = useNavigate();
   const param = useParams();
-  const dispatch = useDispatch();
 
   const [stateCategory, setStateCategory] = useState();
   const [stateDescription, setStateDescription] = useState();
   const [stateCreator, setStateCreator] = useState();
 
   const [componentSize, setComponentSize] = useState("default");
-  const projectDetailReducer = useSelector(
-    (state) => state.projectDetailReducer
-  );
+
   const editoRef = useRef();
   const [form] = useForm();
   const onFormLayoutChange = ({ size }) => {
