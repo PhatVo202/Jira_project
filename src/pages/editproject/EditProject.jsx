@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/header/Header";
-import { Form, Input, Select, Button, Space } from "antd";
+import { Form, Input, Select, Button, Space, Breadcrumb } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "antd/es/form/Form";
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import {
   fetchProjectCategorylsApi,
   fetchProjectDetailsApi,
@@ -79,6 +79,21 @@ export default function EditProject() {
     <div>
       <Header />
       <div className="container py-5">
+        <Breadcrumb
+          className="py-3"
+          items={[
+            {
+              title: <NavLink to="/projectmanagement">Project</NavLink>,
+            },
+            {
+              title: (
+                <>
+                  <span>Update Project</span>
+                </>
+              ),
+            },
+          ]}
+        />
         <h3>Update Project</h3>
         <div>
           <Form

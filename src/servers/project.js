@@ -142,7 +142,7 @@ export const updateDescriptionApi = (data) => {
 export const updateTaskApi = (data) => {
   return axiosRequest({
     url: "/Project/updateTask",
-    method: "PUT",
+    method: "POST",
     data: data,
   });
 };

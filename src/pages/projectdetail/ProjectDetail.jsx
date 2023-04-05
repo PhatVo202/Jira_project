@@ -59,6 +59,7 @@ import { fetchPriorityApi } from "../../servers/priority";
 import { useForm } from "antd/es/form/Form";
 import parse from "html-react-parser";
 import { deleteCommentApi, updateCommentApi } from "../../servers/comment";
+import { DragDropContext } from "react-beautiful-dnd";
 
 const { Panel } = Collapse;
 
@@ -149,7 +150,7 @@ export default function ProjectDetail() {
     <div>
       <Header />
 
-      <div className="container py-3">
+      <div className="container py-5">
         <Breadcrumb
           className="py-2"
           items={[
@@ -164,11 +165,11 @@ export default function ProjectDetail() {
         />
 
         <div className="row mb-4">
-          <div className="col-4 ">
+          <div className="col-12 col-sm-4 col-md-4 col-xl-4">
             <h3>Board</h3>
           </div>
 
-          <div className="col-8">
+          <div className="col-12 col-sm-8 col-md-8 col-xl-8">
             <div>
               <span>Members</span>
               <Avatar.Group
@@ -227,19 +228,9 @@ export default function ProjectDetail() {
                       />
                     </div>
 
-                    <div className="col-6 py-3">
-                      <h6>Not yet added</h6>
-                    </div>
-
-                    <div className="col-6 py-3">
-                      <h6>Already in project</h6>
-                    </div>
-
-                    <div
-                      className="col-6 "
-                      style={{ height: "400px", overflowY: "scroll" }}
-                    >
-                      <div>
+                    <div className="col-12 col-md-12 col-lg-6 col-xl-6 ">
+                      <h6 className="my-2">Not yet added</h6>
+                      <div style={{ height: "400px", overflowY: "scroll" }}>
                         {arrMember?.map((member, index) => {
                           return (
                             <div key={index}>
@@ -288,51 +279,53 @@ export default function ProjectDetail() {
                       </div>
                     </div>
 
-                    <div
-                      className="col-6"
-                      style={{ height: "400px", overflowY: "scroll" }}
-                    >
-                      {projectDetail?.members?.map((member, index) => {
-                        return (
-                          <div key={index}>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                marginBottom: "10px",
-                              }}
-                            >
-                              <Avatar src={member.avatar} />
-                              <div>
-                                <Tag color="green">{member.name}</Tag>
-                                <span> - </span>
-                                <span>User ID: {member.userId}</span>
-                              </div>
-                              <Button
-                                onClick={async () => {
-                                  const data = {
-                                    projectId: projectDetail.id,
-                                    userId: member.userId,
-                                  };
-
-                                  try {
-                                    await removeUserFromProjectApi(data);
-                                    dispatch(removeMemberBoard(member.userId));
-                                  } catch (error) {
-                                    notification.error({
-                                      message: error.response.data.content,
-                                    });
-                                  }
+                    <div className="col-12 col-md-12 col-lg-6 col-xl-6 ">
+                      <h6 className="my-2">Already in project</h6>
+                      <div style={{ height: "400px", overflowY: "scroll" }}>
+                        {projectDetail?.members?.map((member, index) => {
+                          return (
+                            <div key={index}>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginBottom: "10px",
                                 }}
-                                danger
                               >
-                                Remove
-                              </Button>
+                                <Avatar src={member.avatar} />
+                                <div>
+                                  <Tag color="green">{member.name}</Tag>
+                                  <span> - </span>
+                                  <span>User ID: {member.userId}</span>
+                                </div>
+                                <Button
+                                  onClick={async () => {
+                                    const data = {
+                                      projectId: projectDetail.id,
+                                      userId: member.userId,
+                                    };
+
+                                    try {
+                                      await removeUserFromProjectApi(data);
+                                      dispatch(
+                                        removeMemberBoard(member.userId)
+                                      );
+                                    } catch (error) {
+                                      notification.error({
+                                        message: error.response.data.content,
+                                      });
+                                    }
+                                  }}
+                                  danger
+                                >
+                                  Remove
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -344,7 +337,10 @@ export default function ProjectDetail() {
         <div className="row">
           {projectDetail?.lstTask?.map((item, index) => {
             return (
-              <div className="col-3" key={index}>
+              <div
+                className="col-12 col-sm-6 mt-3 col-lg-3 mt-lg-0 col-xl-3"
+                key={index}
+              >
                 <div
                   onClick={() => {
                     setStatusName(item.statusName);
@@ -363,6 +359,7 @@ export default function ProjectDetail() {
                   {item.lstTaskDeTail.map((taskDetail, index) => {
                     return (
                       <div
+                        draggable="true"
                         onClick={() => {
                           dispatch(setTaskDetail(taskDetail.taskId));
                           setModal3Open(true);
@@ -374,7 +371,7 @@ export default function ProjectDetail() {
                           dispatch(setAllComment(taskDetail.taskId));
                         }}
                         key={index}
-                        className="card px-2 bg-white mx-1"
+                        className="card px-2 mt-2 bg-white mx-1"
                       >
                         <div
                           style={{
@@ -500,7 +497,7 @@ export default function ProjectDetail() {
         <h5 className="mt-3">{taskDetail?.taskName}</h5>
         <div className="container-xl">
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-md-6 col-xl-6">
               <h6>Description</h6>
               <div
                 className="form-group"
@@ -633,7 +630,7 @@ export default function ProjectDetail() {
                 })}
               </div>
             </div>
-            <div className="col-6">
+            <div className="col-12 col-md-6 col-xl-6">
               <Select
                 className="mb-2"
                 onSelect={async (value) => {
@@ -658,29 +655,29 @@ export default function ProjectDetail() {
                 })}
               </Select>
 
-              <Collapse defaultActiveKey={1}>
+              <Collapse size="large" defaultActiveKey={1}>
                 <Panel header="Detail" key="1">
                   <div className="row">
-                    <div className="col-4">
+                    <div className="col-12 col-sm-4 col-xl-4">
                       <h6>Assignees</h6>
                     </div>
-                    <div className="col-8">
+                    <div className="col-12 col-sm-8 col-xl-8">
                       <Select
                         style={{ width: "100%" }}
                         mode="multiple"
                         // defaultValue={memberOptions}
                         // value={membersOptions}
                         // value={membersOptions}
-                        defaultValue={membersOptions}
+                        // defaultValue={membersOptions}
                         onDeselect={(e) => console.log(e)}
                         placeholder={taskDetail?.assigness?.name}
                         onSelect={async (value) => {
                           const data = {
-                            listUserAsign: value,
+                            listUserAsign: [value],
                             taskId: taskDetail.taskId,
                             taskName: taskDetail.taskName,
                             description: taskDetail.description,
-                            taskDetail: taskDetail.statusId,
+                            statusId: taskDetail.statusId,
                             originalEstimate: taskDetail.originalEstimate,
                             timeTrackingSpent: taskDetail.timeTrackingSpent,
                             timeTrackingRemaining:
@@ -689,6 +686,7 @@ export default function ProjectDetail() {
                             typeId: taskDetail.typeId,
                             priorityId: taskDetail.priorityId,
                           };
+                          console.log(data);
 
                           setListUser(data);
                         }}
@@ -717,10 +715,10 @@ export default function ProjectDetail() {
                       </Button>
                     </div>
 
-                    <div className="col-4 mt-2">
+                    <div className="col-12 col-sm-4 col-xl-4 mt-2">
                       <h6>Priority</h6>
                     </div>
-                    <div className="col-8 mt-2">
+                    <div className="col-12 col-sm-8 col-xl-8 mt-2">
                       <Select
                         onChange={async (value) => {
                           const data = {
@@ -744,10 +742,10 @@ export default function ProjectDetail() {
                       </Select>
                     </div>
 
-                    <div className="col-4 mt-2">
+                    <div className="col-12 col-sm-4 col-xl-4 mt-2">
                       <h6>Estimate</h6>
                     </div>
-                    <div className="col-8 mt-2">
+                    <div className="col-12 col-sm-8 col-xl-8 mt-2">
                       <Tooltip
                         trigger="click"
                         title={
@@ -783,11 +781,11 @@ export default function ProjectDetail() {
                       </Tooltip>
                     </div>
 
-                    <div className="col-4">
+                    <div className="col-12 col-sm-4 col-xl-4">
                       <h6>Time tracking</h6>
                     </div>
                     <div
-                      className="col-8"
+                      className="col-12 col-sm-8 col-xl-8"
                       style={{ border: "0.2px solid gray" }}
                     >
                       <Slider

@@ -398,7 +398,7 @@ export default function ProjectManagement() {
   return (
     <div>
       <Header />
-      <div className="container">
+      <div className="container py-5">
         <div
           style={{
             display: "flex",
@@ -414,6 +414,7 @@ export default function ProjectManagement() {
         <div>
           <Input.Search
             size="large"
+            className="mb-3"
             placeholder="Search here"
             enterButton
             onSearch={handleSearch}

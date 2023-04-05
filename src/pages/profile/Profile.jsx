@@ -1,8 +1,8 @@
-import { Avatar, Button, Form, Input, Space } from "antd";
+import { Avatar, Breadcrumb, Button, Form, Input, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Header from "../../components/header/Header";
 import { editUser } from "../../servers/user";
@@ -53,21 +53,36 @@ export default function Profile() {
     <div>
       <Header />
       <div className="container py-5">
+        <Breadcrumb
+          className="py-3"
+          items={[
+            {
+              title: <NavLink to="/projectmanagement">Project</NavLink>,
+            },
+            {
+              title: (
+                <>
+                  <span>Update Project</span>
+                </>
+              ),
+            },
+          ]}
+        />
         <div className="row">
-          <div className="col-5">
+          <div className="col-12 text-center col-sm-12 text-md-center col-lg-5">
             <Avatar
               style={{ width: "300px", height: "300px" }}
               src={userhookState?.userInfo?.avatar}
             />
           </div>
-          <div className="col-7">
+          <div className="col-12 col-sm-12 col-lg-7 mt-lg-0 mt-5">
             <Form
               form={form}
               labelCol={{
                 span: 4,
               }}
               wrapperCol={{
-                span: 14,
+                span: 24,
               }}
               layout="vertical"
               initialValues={{
@@ -75,9 +90,9 @@ export default function Profile() {
               }}
               onFinish={handleFinish}
               onValuesChange={onFormLayoutChange}
-              size={componentSize}
+              size="large"
               style={{
-                maxWidth: 1000,
+                maxWidth: 1200,
               }}
             >
               <Form.Item
@@ -107,7 +122,9 @@ export default function Profile() {
 
               <div style={{ textAlign: "right" }}>
                 <Space className="my-5">
-                  <Button>Cancel</Button>
+                  <Button onClick={() => navigate("/projectmanagement")}>
+                    Cancel
+                  </Button>
                   <Button htmlType="submit" type="primary">
                     Update
                   </Button>

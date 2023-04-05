@@ -8,6 +8,7 @@ import {
   Avatar,
   Tooltip,
   List,
+  Breadcrumb,
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +18,12 @@ import {
   filterData,
   setUserManagementAction,
 } from "../../store/actions/userManagementAction";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  HomeOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { deleteUser, editUser } from "../../servers/user";
 import { useMediaQuery } from "react-responsive";
@@ -146,8 +152,26 @@ export default function UserManagement() {
     <div>
       <Header />
       <div className="container py-5">
+        <Breadcrumb
+          className="py-3"
+          items={[
+            {
+              title: <NavLink to="/projectmanagement">Project</NavLink>,
+            },
+            {
+              title: (
+                <>
+                  <UserOutlined />
+                  <span>User Management</span>
+                </>
+              ),
+            },
+          ]}
+        />
         <div>
           <Input.Search
+            className="mb-3"
+            size="large"
             placeholder="Search here"
             enterButton
             onSearch={handleSearch}
