@@ -531,7 +531,7 @@ export default function ProjectDetail() {
           setModal3Open(false);
         }}
       >
-        <Select value={taskDetail.taskTypeDetail?.taskType}>
+        <Select placeholder={taskDetail.taskTypeDetail?.taskType}>
           {taskType?.map((type, index) => {
             return (
               <Select.Option key={index} value={type.taskType}>

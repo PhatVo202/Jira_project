@@ -31,6 +31,7 @@ export default function UserManagement() {
   const [values, setValues] = useState({});
   const userList = useSelector((state) => state.userManagementReducer);
   const dispatch = useDispatch();
+  const [pinCode, setPinCode] = useState("");
   useEffect(() => {
     setTimeout(() => {
       setLoadingState({ isLoading: true });
@@ -145,11 +146,18 @@ export default function UserManagement() {
     }
   };
 
-  const handleSearch = (keyword) => {
-    dispatch(filterData(keyword));
-  };
+  // const handleSearch = (keyword) => {
+  //   dispatch(filterData(keyword));
+  // };
 
   const isMobile = useMediaQuery({ query: `(max-width: 624px)` });
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      dispatch(filterData(pinCode));
+    }, 200);
+    return () => clearTimeout(getData);
+  }, [pinCode]);
 
   return (
     <div>
@@ -177,8 +185,8 @@ export default function UserManagement() {
             size="large"
             placeholder="Search here"
             enterButton
-            onSearch={handleSearch}
-            onChange
+            // onSearch={handleSearch}
+            onChange={(e) => setPinCode(e.target.value)}
           />
           {isMobile ? (
             <List

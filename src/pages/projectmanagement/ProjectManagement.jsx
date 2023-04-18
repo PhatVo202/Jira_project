@@ -43,6 +43,8 @@ export default function ProjectManagement() {
 
   const [_, setLoadingState] = useContext(LoadingContext);
 
+  const [pinCode, setPinCode] = useState("");
+
   useEffect(() => {
     setTimeout(() => {
       setLoadingState({ isLoading: true });
@@ -391,10 +393,21 @@ export default function ProjectManagement() {
     setUserSearch(result.data.content);
   };
 
-  const handleSearch = (value) => {
-    value === "" && dispatch(setProjectListAction());
-    value && dispatch(filterProjectAction(value));
-  };
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      if (pinCode === "") {
+        dispatch(setProjectListAction());
+      } else {
+        dispatch(filterProjectAction(pinCode));
+      }
+    }, 200);
+    return () => clearTimeout(getData);
+  }, [pinCode]);
+
+  // const handleSearch = (value) => {
+  //   value === "" && dispatch(setProjectListAction());
+  //   value && dispatch(filterProjectAction(value));
+  // };
 
   return (
     <div>
@@ -418,7 +431,8 @@ export default function ProjectManagement() {
             className="mb-3"
             placeholder="Search here"
             enterButton
-            onSearch={handleSearch}
+            onChange={(e) => setPinCode(e.target.value)}
+            // onSearch={handleSearch}
           />
 
           {isMobile ? (
