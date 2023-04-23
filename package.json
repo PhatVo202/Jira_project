@@ -9,6 +9,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+    "@mantine/core": "^6.0.8",
+    "@mantine/hooks": "^6.0.8",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.15",
     "@testing-library/jest-dom": "^5.16.5",
