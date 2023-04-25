@@ -87,6 +87,14 @@ export default function ProjectDetail() {
   const [listUser, setListUser] = useState();
 
   const editoRef = useRef();
+  const [pinCode, setPinCode] = useState("");
+
+  useEffect(() => {
+    const getData = setTimeout(() => {
+      dispatch(searchMemberBoard(pinCode));
+    }, 200);
+    return () => clearTimeout(getData);
+  }, [pinCode]);
 
   const [_, setLoadingState] = useContext(LoadingContext);
   useEffect(() => {
@@ -124,9 +132,9 @@ export default function ProjectDetail() {
     }
   }, [param.id]);
 
-  const onSearch = (value) => {
-    dispatch(searchMemberBoard(value));
-  };
+  // const onSearch = (value) => {
+  //   dispatch(searchMemberBoard(value));
+  // };
 
   const changeColors = (key) => {
     switch (key) {
@@ -248,7 +256,8 @@ export default function ProjectDetail() {
                     <div className="col-6">
                       <Search
                         placeholder="input search text"
-                        onSearch={onSearch}
+                        // onSearch={onSearch}
+                        onChange={(e) => setPinCode(e.target.value)}
                         enterButton
                       />
                     </div>

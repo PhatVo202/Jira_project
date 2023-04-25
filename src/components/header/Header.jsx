@@ -34,7 +34,11 @@ import Swal from "sweetalert2";
 import "./style.css";
 import { useMediaQuery } from "react-responsive";
 
+import { useDisclosure } from "@mantine/hooks";
+import { Burger } from "@mantine/core";
+
 const { Option } = Select;
+
 export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -61,6 +65,9 @@ export default function Header() {
   const [stateProjectId, setStateProjectId] = useState();
 
   const editoRef = useRef();
+
+  const [opened, { toggle }] = useDisclosure(false);
+  const label = opened ? "Close navigation" : "Open navigation";
 
   useEffect(() => {
     getAllProjectList();
@@ -156,7 +163,13 @@ export default function Header() {
             aria-expanded="false"
             aria-label="Toggle navigation"
           >
-            <MenuOutlined className="text-white" />
+            {/* <MenuOutlined className="text-white" /> */}
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              aria-label={label}
+              color="white"
+            />
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ml-auto">
