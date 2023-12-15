@@ -7,7 +7,7 @@ export default function NoAuthGuard() {
   const navigate = useNavigate();
   useEffect(() => {
     if (userState.userInfo) {
-      navigate("/projectmanagement");
+      navigate("/jira/projectmanagement");
     }
   }, []);
   return <Outlet />;

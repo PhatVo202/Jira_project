@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useMediaQuery } from "react-responsive";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   createStyles,
   Image,
@@ -15,7 +14,8 @@ import {
 
 export default function PageNotFound() {
   const userReducer = useSelector((state) => state.userReducer.userInfo);
-  const isMobile = useMediaQuery({ query: `(max-width:400px)` });
+  // const isMobile = useMediaQuery({ query: `(max-width:400px)` });
+  const navigate = useNavigate();
   const useStyles = createStyles((theme) => ({
     root: {
       paddingTop: rem(80),
@@ -53,30 +53,12 @@ export default function PageNotFound() {
   }));
   const { classes } = useStyles();
 
+  const handleOnclick = () => {
+    !userReducer && navigate("/jira/projectmanagement");
+    userReducer && navigate("/login");
+  };
+
   return (
-    // <div className="container">
-    //   <div
-    //     className={isMobile && "py-5 mt-5"}
-    //     style={{
-    //       display: "flex",
-    //       justifyContent: "center",
-    //       alignItems: "center",
-    //     }}
-    //   >
-    //     <img
-    //       style={{ objectFit: "cover" }}
-    //       src="./img/notfound.png"
-    //       alt="notfound"
-    //       width={isMobile && 400}
-    //       height={isMobile && 300}
-    //     />
-    //   </div>
-    //   <div className="text-center">
-    //     <NavLink to={userReducer ? "/login" : "/projectmanagement"}>
-    //       Back to home
-    //     </NavLink>
-    //   </div>
-    // </div>
     <Container className={classes.root} style={{ height: "100vh" }}>
       <SimpleGrid
         spacing={80}
@@ -96,13 +78,9 @@ export default function PageNotFound() {
             size="md"
             mt="xl"
             className={classes.control}
+            onClick={() => handleOnclick()}
           >
-            <NavLink
-              style={{ textDecoration: "none" }}
-              to={userReducer ? "/login" : "/projectmanagement"}
-            >
-              Get back to home page
-            </NavLink>
+            Get back to home page
           </Button>
         </div>
         <Image src="./img/404.png" className={classes.desktopImage} />

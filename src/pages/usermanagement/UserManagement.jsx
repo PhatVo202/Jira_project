@@ -12,7 +12,14 @@ import {
 } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Header from "../../components/header/Header";
+import { fetchStatusApi } from "../../servers/status";
+import { fetchPriorityApi } from "../../servers/priority";
+import { fetchTaskTypeApi } from "../../servers/tasktype";
+
+import {
+  getAllMember,
+  setArrProjectAll,
+} from "../../store/actions/projectDetailAction";
 
 import {
   filterData,
@@ -30,18 +37,46 @@ export default function UserManagement() {
   const [_, setLoadingState] = useContext(LoadingContext);
   const [values, setValues] = useState({});
   const userList = useSelector((state) => state.userManagementReducer);
+  const [modal2Open, setModal2Open] = useState(false);
   const dispatch = useDispatch();
   const [pinCode, setPinCode] = useState("");
+  const [status, setStatus] = useState([]);
+  const [priority, setPriority] = useState([]);
+  const [taskType, setTaskType] = useState([]);
   useEffect(() => {
-    setTimeout(() => {
-      setLoadingState({ isLoading: true });
-    }, 200);
+    // setTimeout(() => {
+    //   setLoadingState({ isLoading: true });
+    // }, 200);
     getUserList();
-    setTimeout(() => {
-      setLoadingState({ isLoading: false });
-    }, 2000);
+    getAllProjectList();
+    getStatusAll();
+    getPriorityAll();
+    getTaskTypeAll();
+    dispatch(getAllMember(""));
+    // setTimeout(() => {
+    //   setLoadingState({ isLoading: false });
+    // }, 2000);
   }, []);
-  const [modal2Open, setModal2Open] = useState(false);
+
+  const getAllProjectList = () => {
+    dispatch(setArrProjectAll());
+  };
+
+  const getStatusAll = async () => {
+    const result = await fetchStatusApi();
+    setStatus(result.data.content);
+  };
+
+  const getPriorityAll = async () => {
+    const result = await fetchPriorityApi();
+    setPriority(result.data.content);
+  };
+
+  const getTaskTypeAll = async () => {
+    const result = await fetchTaskTypeApi();
+    setTaskType(result.data.content);
+  };
+
   const getUserList = async () => {
     dispatch(setUserManagementAction());
   };
@@ -146,10 +181,6 @@ export default function UserManagement() {
     }
   };
 
-  // const handleSearch = (keyword) => {
-  //   dispatch(filterData(keyword));
-  // };
-
   const isMobile = useMediaQuery({ query: `(max-width: 624px)` });
 
   useEffect(() => {
@@ -161,7 +192,7 @@ export default function UserManagement() {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div className="container py-5">
         <Breadcrumb
           className="py-3"
@@ -185,7 +216,6 @@ export default function UserManagement() {
             size="large"
             placeholder="Search here"
             enterButton
-            // onSearch={handleSearch}
             onChange={(e) => setPinCode(e.target.value)}
           />
           {isMobile ? (

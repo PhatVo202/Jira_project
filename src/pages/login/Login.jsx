@@ -39,15 +39,12 @@ export default function Login() {
         showConfirmButton: false,
       });
 
-      navigate("/projectmanagement");
+      navigate("/jira/projectmanagement");
     } catch (error) {
       notification.error({
         message: error.response.data.message,
       });
     }
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
   };
 
   const isMobile = useMediaQuery({ query: `(max-width:767px)` });
@@ -94,7 +91,6 @@ export default function Login() {
                     remember: true,
                   }}
                   onFinish={onFinish}
-                  onFinishFailed={onFinishFailed}
                   autoComplete="off"
                 >
                   <Form.Item
@@ -209,7 +205,6 @@ export default function Login() {
                   remember: true,
                 }}
                 onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
                 autoComplete="off"
               >
                 <Form.Item

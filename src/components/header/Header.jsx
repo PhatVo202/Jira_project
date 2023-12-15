@@ -93,7 +93,6 @@ export default function Header() {
 
   const getTaskTypeAll = async () => {
     const result = await fetchTaskTypeApi();
-
     setTaskType(result.data.content);
   };
 
@@ -150,10 +149,19 @@ export default function Header() {
         {/* style={{ display: "flex", justifyContent: "space-between" }} */}
 
         <nav className="navbar navbar-expand-md navbar-light ">
-          <Link to="/projectmanagement" className="navbar-brand text-white">
+          <Link
+            to="/projectmanagement"
+            className="navbar-brand  text-white"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <FontAwesomeIcon icon={faJira} className="mr-2" />
             Jira SoftWare
           </Link>
+
           <button
             className="navbar-toggler"
             type="button"

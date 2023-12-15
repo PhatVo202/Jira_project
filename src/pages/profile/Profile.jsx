@@ -1,16 +1,26 @@
-import { Avatar, Breadcrumb, Button, Form, Input, Space } from "antd";
+import {
+  Avatar,
+  Breadcrumb,
+  Button,
+  Form,
+  Input,
+  Space,
+  notification,
+} from "antd";
 import { useForm } from "antd/es/form/Form";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import Header from "../../components/header/Header";
-import { editUser } from "../../servers/user";
+import { editUser, loginApi } from "../../servers/user";
+import { setUserInfoAction } from "../../store/actions/userAction";
+import { useDispatch } from "react-redux";
 
 export default function Profile() {
   const navigate = useNavigate();
   const userhookState = useSelector((state) => state.userReducer);
   const [form] = useForm();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getUserInfo();
@@ -31,27 +41,44 @@ export default function Profile() {
   };
 
   const handleFinish = async (value) => {
-    const data = {
-      id: value.id,
-      email: value.email,
-      name: value.name,
-      phoneNumber: value.phoneNumber,
-      passWord: value.passWord,
-    };
+    try {
+      const data = {
+        id: value.id,
+        email: value.email,
+        name: value.name,
+        phoneNumber: value.phoneNumber,
+        passWord: value.passWord,
+      };
 
-    await editUser(data);
-    Swal.fire({
-      title: "Cập nhật thành công!",
-      text: "Hoàn tất!!",
-      icon: "success",
-      timer: 2000,
-      showConfirmButton: false,
-    });
-    navigate("/projectmanagement");
+      const dataSignIn = {
+        email: value.email,
+        passWord: value.passWord,
+      };
+
+      await editUser(data);
+
+      const result = await loginApi(dataSignIn);
+      localStorage.setItem(
+        "USER_INFO_KEY",
+        JSON.stringify(result.data.content)
+      );
+      dispatch(setUserInfoAction(result.data.content));
+      Swal.fire({
+        title: "Cập nhật thành công!",
+        text: "Hoàn tất!!",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/jira/projectmanagement");
+    } catch (error) {
+      notification.error({
+        message: error.response.data.message,
+      });
+    }
   };
   return (
-    <div>
-      <Header />
+    <>
       <div className="container py-5">
         <Breadcrumb
           className="py-3"
@@ -122,7 +149,7 @@ export default function Profile() {
 
               <div style={{ textAlign: "right" }}>
                 <Space className="my-5">
-                  <Button onClick={() => navigate("/projectmanagement")}>
+                  <Button onClick={() => navigate("/jira/projectmanagement")}>
                     Cancel
                   </Button>
                   <Button htmlType="submit" type="primary">
@@ -134,6 +161,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

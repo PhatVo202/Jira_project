@@ -21,8 +21,8 @@ import Search from "antd/es/input/Search";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useParams } from "react-router-dom";
-import Header from "../../components/header/Header";
 import {
+  fetchProjectDetailsApi,
   getAssignUserProjectApi,
   removeTaskApi,
   removeUserFromProjectApi,
@@ -43,6 +43,7 @@ import {
   setDescriptionAction,
   setMemberBoardAction,
   setProjectDetailArrAction,
+  setStatusDragDropAction,
   setTaskDetail,
 } from "../../store/actions/projectDetailAction";
 
@@ -98,12 +99,12 @@ export default function ProjectDetail() {
 
   const [_, setLoadingState] = useContext(LoadingContext);
   useEffect(() => {
-    setTimeout(() => {
-      setLoadingState({ isLoading: true });
-    }, 200);
-    setTimeout(() => {
-      setLoadingState({ isLoading: false });
-    }, 1500);
+    // setTimeout(() => {
+    //   setLoadingState({ isLoading: true });
+    // }, 200);
+    // setTimeout(() => {
+    //   setLoadingState({ isLoading: false });
+    // }, 1500);
   }, []);
   useEffect(() => {
     getTaskTypeAll();
@@ -164,25 +165,24 @@ export default function ProjectDetail() {
     if (!destination) {
       return;
     }
-    if (
-      source.index === destination.index &&
-      source.droppableId === destination.droppableId
-    ) {
-      return;
-    }
+    // if (
+    //   source.index === destination.index &&
+    //   source.droppableId === destination.droppableId
+    // ) {
+    //   return;
+    // }
 
     const dataUpdateStatus = {
       taskId: Number(result.draggableId),
       statusId: destination.droppableId,
     };
 
-    dispatch(updateStatusApi(dataUpdateStatus, param.id));
+    dispatch(updateStatusApi(dataUpdateStatus));
+    // dispatch(setStatusDragDropAction(fetchProjectDetailsApi(param.id)));
   };
 
   return (
-    <div>
-      <Header />
-
+    <>
       <div className="container py-5">
         <Breadcrumb
           className="py-2"
@@ -372,7 +372,7 @@ export default function ProjectDetail() {
           <div className="row">
             {projectDetail?.lstTask?.map((item, index) => {
               return (
-                <Droppable droppableId={item.statusId}>
+                <Droppable key={item.taskId} droppableId={item.statusId}>
                   {(provided) => {
                     return (
                       <div
@@ -399,7 +399,7 @@ export default function ProjectDetail() {
                           >
                             {item.statusName}
                           </Tag>
-                          {item.lstTaskDeTail.map((taskDetail, index) => {
+                          {item?.lstTaskDeTail.map((taskDetail, index) => {
                             return (
                               <Draggable
                                 index={index}
@@ -925,6 +925,6 @@ export default function ProjectDetail() {
           </div>
         </div>
       </Modal>
-    </div>
+    </>
   );
 }

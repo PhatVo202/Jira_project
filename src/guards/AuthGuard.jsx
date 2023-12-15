@@ -17,7 +17,5 @@ export default function AuthGuard() {
     }
   }, []);
 
-  const isLogin = !userState.userInfo ? <Outlet /> : <ProjectManagement />;
-
-  return isLogin;
+  return <Outlet />;
 }

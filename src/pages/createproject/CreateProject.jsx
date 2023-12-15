@@ -44,7 +44,7 @@ export default function CreateProject() {
       timer: 2000,
       showConfirmButton: true,
     });
-    navigate("/projectmanagement");
+    navigate("/jira/projectmanagement");
   };
   return (
     <div>

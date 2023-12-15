@@ -1,6 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import Header from "../../components/header/Header";
-import { Form, Input, Select, Button, Space, Breadcrumb } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Space,
+  Breadcrumb,
+  notification,
+} from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { useForm } from "antd/es/form/Form";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
@@ -52,33 +59,38 @@ export default function EditProject() {
   };
 
   const handleFinish = async (value) => {
-    const data = {
-      id: value.id,
-      projectName: value.projectName,
-      creator: stateCreator,
-      description: editoRef.current.getContent(),
-      categoryId: value.categoryName,
-    };
+    try {
+      const data = {
+        id: value.id,
+        projectName: value.projectName,
+        creator: stateCreator,
+        description: editoRef.current.getContent(),
+        categoryId: value.categoryName,
+      };
 
-    await updateProjectApi(value.id, data);
-    Swal.fire({
-      title: "Tạo dự án thành công!",
-      text: "Hoàn tất!!",
-      icon: "success",
-      timer: 2000,
-      showConfirmButton: false,
-    });
-    navigate("/projectmanagement");
+      await updateProjectApi(value.id, data);
+      Swal.fire({
+        title: "Tạo dự án thành công!",
+        text: "Hoàn tất!!",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      navigate("/jira/projectmanagement");
+    } catch (error) {
+      notification.error({
+        message: error.response.data.content,
+      });
+    }
   };
   return (
-    <div>
-      <Header />
+    <>
       <div className="container py-5">
         <Breadcrumb
           className="py-3"
           items={[
             {
-              title: <NavLink to="/projectmanagement">Project</NavLink>,
+              title: <NavLink to="/jira/projectmanagement">Project</NavLink>,
             },
             {
               title: (
@@ -155,6 +167,6 @@ export default function EditProject() {
           </Form>
         </div>
       </div>
-    </div>
+    </>
   );
 }

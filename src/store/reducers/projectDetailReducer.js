@@ -107,7 +107,7 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
 
     case SEARCH_MEMBER_BOARD: {
       state.arrMember = payload;
-      console.log(payload);
+
       break;
     }
 

@@ -12,6 +12,7 @@ import ProjectDetail from "../pages/projectdetail/ProjectDetail";
 import ProjectManagement from "../pages/projectmanagement/ProjectManagement";
 import Register from "../pages/register/Register";
 import UserManagement from "../pages/usermanagement/UserManagement";
+import HomeLayout from "../layouts/home/HomeLayout";
 
 export default function Router() {
   const routing = useRoutes([
@@ -46,35 +47,47 @@ export default function Router() {
       ],
     },
     {
-      path: "/projectmanagement",
-      element: <AuthGuard />,
+      path: "/jira",
+      element: <HomeLayout />,
       children: [
         {
-          path: "/projectmanagement",
-          element: <ProjectManagement />,
+          path: "/jira",
+          element: <AuthGuard />,
+          children: [
+            {
+              path: "/jira/projectmanagement",
+              element: <ProjectManagement />,
+            },
+            {
+              path: "/jira/user",
+              element: <UserManagement />,
+            },
+            {
+              path: "/jira/my-profile",
+              element: <Profile />,
+            },
+            {
+              path: "/jira/createproject",
+              element: <CreateProject />,
+            },
+            {
+              path: "/jira/projectdetail/:id",
+              element: <ProjectDetail />,
+            },
+            {
+              path: "/jira/edit/:id",
+              element: <EditProject />,
+            },
+          ],
         },
       ],
     },
-    {
-      path: "/projectdetail/:id",
-      element: <ProjectDetail />,
-    },
-    {
-      path: "/edit/:id",
-      element: <EditProject />,
-    },
-    {
-      path: "/createproject",
-      element: <CreateProject />,
-    },
-    {
-      path: "/my-profile",
-      element: <Profile />,
-    },
-    {
-      path: "/user",
-      element: <UserManagement />,
-    },
+
+    // {
+    //   path: "/edit/:id",
+    //   element: <EditProject />,
+    // },
+
     {
       path: "*",
       element: <PageNotFound />,

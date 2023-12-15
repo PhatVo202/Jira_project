@@ -46,13 +46,13 @@ export default function ProjectManagement() {
   const [pinCode, setPinCode] = useState("");
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoadingState({ isLoading: true });
-    }, 200);
+    // setTimeout(() => {
+    //   setLoadingState({ isLoading: true });
+    // }, 200);
     getAllProject();
-    setTimeout(() => {
-      setLoadingState({ isLoading: false });
-    }, 2000);
+    // setTimeout(() => {
+    //   setLoadingState({ isLoading: false });
+    // }, 2000);
   }, []);
 
   const getAllProject = () => {
@@ -87,7 +87,7 @@ export default function ProjectManagement() {
       render: (text, record, index) => {
         return (
           <NavLink
-            to={`/projectdetail/${record.id}`}
+            to={`/jira/projectdetail/${record.id}`}
             style={{ textDecoration: "none" }}
           >
             {text}
@@ -352,7 +352,7 @@ export default function ProjectManagement() {
           <>
             <EditOutlined
               onClick={() => {
-                navigate(`/edit/${text.id}`);
+                navigate(`/jira/edit/${text.id}`);
               }}
               style={{
                 cursor: "pointer",
@@ -393,6 +393,7 @@ export default function ProjectManagement() {
     setUserSearch(result.data.content);
   };
 
+  //debounce search
   useEffect(() => {
     const getData = setTimeout(() => {
       if (pinCode === "") {
@@ -404,14 +405,9 @@ export default function ProjectManagement() {
     return () => clearTimeout(getData);
   }, [pinCode]);
 
-  // const handleSearch = (value) => {
-  //   value === "" && dispatch(setProjectListAction());
-  //   value && dispatch(filterProjectAction(value));
-  // };
-
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <div className="container py-5">
         <div
           style={{
@@ -432,7 +428,6 @@ export default function ProjectManagement() {
             placeholder="Search here"
             enterButton
             onChange={(e) => setPinCode(e.target.value)}
-            // onSearch={handleSearch}
           />
 
           {isMobile ? (
@@ -454,7 +449,7 @@ export default function ProjectManagement() {
                     description={
                       <div className="text-center">
                         <p>
-                          <NavLink to={`/projectdetail/${item.id}`}>
+                          <NavLink to={`/jira/projectdetail/${item.id}`}>
                             {item.projectName}
                           </NavLink>
                         </p>
@@ -483,7 +478,7 @@ export default function ProjectManagement() {
                         <div>
                           <EditOutlined
                             onClick={() => {
-                              navigate(`/edit/${item.id}`);
+                              navigate(`/jira/edit/${item.id}`);
                             }}
                             style={{
                               cursor: "pointer",
