@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import Header from "../../components/header/Header";
 
 import {
   AutoComplete,
@@ -406,8 +405,7 @@ export default function ProjectManagement() {
   }, [pinCode]);
 
   return (
-    <div>
-      {/* <Header /> */}
+    <>
       <div className="container py-5">
         <div
           style={{
@@ -520,6 +518,6 @@ export default function ProjectManagement() {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 }

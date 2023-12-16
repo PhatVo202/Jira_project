@@ -80,21 +80,6 @@ export default function Profile() {
   return (
     <>
       <div className="container py-5">
-        <Breadcrumb
-          className="py-3"
-          items={[
-            {
-              title: <NavLink to="/projectmanagement">Project</NavLink>,
-            },
-            {
-              title: (
-                <>
-                  <span>Update Project</span>
-                </>
-              ),
-            },
-          ]}
-        />
         <div className="row">
           <div className="col-12 text-center col-sm-12 text-md-center col-lg-5">
             <Avatar

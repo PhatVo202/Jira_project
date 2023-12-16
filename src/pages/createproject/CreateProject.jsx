@@ -2,7 +2,6 @@ import { Form, Button, Input, Select, Space, Breadcrumb } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Link, useNavigate } from "react-router-dom";
-import Header from "../../components/header/Header";
 import {
   createProjectAuthorizeApi,
   fetchProjectCategorylsApi,
@@ -48,7 +47,6 @@ export default function CreateProject() {
   };
   return (
     <div>
-      <Header />
       <div className="container py-5">
         <div>
           <Breadcrumb
