@@ -1,4 +1,4 @@
 export const TaskType = {
-  bug: "bug",
-  newTask: "new task",
-};
+  bug: 'bug',
+  newTask: 'new task'
+}

@@ -1,135 +1,116 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from 'react'
 
-import {
-  AutoComplete,
-  Input,
-  Table,
-  Avatar,
-  Tag,
-  Button,
-  notification,
-  Popover,
-  Space,
-  List,
-  Tooltip,
-} from "antd";
-import {
-  deleteProjectApi,
-  getAssignUserProjectApi,
-  removeUserFromProjectApi,
-} from "../../servers/project";
-import { EditOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons";
-import { fetchGetUserApi } from "../../servers/user";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { AutoComplete, Input, Table, Avatar, Tag, Button, notification, Popover, Space, List, Tooltip } from 'antd'
+import { deleteProjectApi, getAssignUserProjectApi, removeUserFromProjectApi } from '../../servers/project'
+import { EditOutlined, DeleteOutlined, CloseOutlined } from '@ant-design/icons'
+import { fetchGetUserApi } from '../../servers/user'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   deleteMemberAction,
   deleteProjectAction,
   filterProjectAction,
   setMemberInfoAction,
   setProjectDetailArrAction,
-  setProjectListAction,
-} from "../../store/actions/projectDetailAction";
-import { LoadingContext } from "../../contexts/loading/LoadingContext";
-import { useMediaQuery } from "react-responsive";
+  setProjectListAction
+} from '../../store/actions/projectDetailAction'
+import { LoadingContext } from '../../contexts/loading/LoadingContext'
+import { useMediaQuery } from 'react-responsive'
 
 export default function ProjectManagement() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [value, setValue] = useState("");
-  const [userSearch, setUserSearch] = useState([]);
-  const listAllProject = useSelector((state) => state.projectDetailReducer);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [value, setValue] = useState('')
+  const [userSearch, setUserSearch] = useState([])
+  const listAllProject = useSelector((state) => state.projectDetailReducer)
 
-  const [_, setLoadingState] = useContext(LoadingContext);
+  const [_, setLoadingState] = useContext(LoadingContext)
 
-  const [pinCode, setPinCode] = useState("");
+  const [pinCode, setPinCode] = useState('')
 
   useEffect(() => {
     // setTimeout(() => {
     //   setLoadingState({ isLoading: true });
     // }, 200);
-    getAllProject();
+    getAllProject()
     // setTimeout(() => {
     //   setLoadingState({ isLoading: false });
     // }, 2000);
-  }, []);
+  }, [])
 
   const getAllProject = () => {
-    dispatch(setProjectListAction());
-  };
+    dispatch(setProjectListAction())
+  }
 
-  const isMobile = useMediaQuery({ query: `(max-width :624px)` });
+  const isMobile = useMediaQuery({ query: `(max-width :624px)` })
 
   const columns = [
     {
-      title: "Id",
-      dataIndex: "id",
+      title: 'Id',
+      dataIndex: 'id',
       sorter: (id2, id1) => {
-        return id2.id - id1.id;
+        return id2.id - id1.id
       },
-      sortDirection: ["descend"],
-      key: 1,
+      sortDirection: ['descend'],
+      key: 1
     },
     {
-      title: "Project name",
-      dataIndex: "projectName",
+      title: 'Project name',
+      dataIndex: 'projectName',
       sorter: (item2, item1) => {
-        let projectName1 = item1.projectName1?.trim().toLowerCase();
-        let projectName2 = item2.projectName2?.trim().toLowerCase();
+        let projectName1 = item1.projectName1?.trim().toLowerCase()
+        let projectName2 = item2.projectName2?.trim().toLowerCase()
         if (projectName2 < projectName1) {
-          return -1;
+          return -1
         }
-        return 1;
+        return 1
       },
-      sortDirection: ["descend"],
+      sortDirection: ['descend'],
       key: 2,
       render: (text, record, index) => {
         return (
-          <NavLink
-            to={`/jira/projectdetail/${record.id}`}
-            style={{ textDecoration: "none" }}
-          >
+          <NavLink to={`/jira/projectdetail/${record.id}`} style={{ textDecoration: 'none' }}>
             {text}
           </NavLink>
-        );
+        )
       },
-      responive: ["sm"],
+      responive: ['sm']
     },
     {
-      title: "Category name",
-      dataIndex: "categoryName",
+      title: 'Category name',
+      dataIndex: 'categoryName',
       sorter: {
         compare: (a, b) => a.math - b.math,
-        multiple: 2,
+        multiple: 2
       },
       sorter: (item2, item1) => {
-        let categoryName1 = item1.categoryName?.trim().toLowerCase();
-        let categoryName2 = item2.categoryName?.trim().toLowerCase();
+        let categoryName1 = item1.categoryName?.trim().toLowerCase()
+        let categoryName2 = item2.categoryName?.trim().toLowerCase()
         if (categoryName2 < categoryName1) {
-          return -1;
+          return -1
         }
-        return 1;
+        return 1
       },
-      sortDirection: ["descend"],
-      key: 3,
+      sortDirection: ['descend'],
+      key: 3
     },
     {
-      title: "Creator",
+      title: 'Creator',
       sorter: {
         compare: (a, b) => a.english - b.english,
-        multiple: 1,
+        multiple: 1
       },
 
       key: 4,
       render: (text) => {
-        return <Tag color="green">{text?.creator?.name}</Tag>;
-      },
+        return <Tag color='green'>{text?.creator?.name}</Tag>
+      }
     },
     {
-      title: "Members",
+      title: 'Members',
       sorter: {
         compare: (a, b) => a.english - b.english,
-        multiple: 1,
+        multiple: 1
       },
       key: 5,
       render: (text) => {
@@ -138,11 +119,11 @@ export default function ProjectManagement() {
             {text?.members?.slice(0, 3).map((item, index) => {
               return (
                 <Popover
-                  placement="topLeft"
-                  title={"Members"}
+                  placement='topLeft'
+                  title={'Members'}
                   content={() => {
                     return (
-                      <table className="table" key={index}>
+                      <table className='table' key={index}>
                         <thead>
                           <tr>
                             <th>ID</th>
@@ -155,13 +136,7 @@ export default function ProjectManagement() {
                           <tr>
                             <td>{item.userId}</td>
                             <td>
-                              <Avatar
-                                height={30}
-                                width={30}
-                                style={{ borderRadius: "50%" }}
-                                src={item.avatar}
-                                alt=""
-                              />
+                              <Avatar height={30} width={30} style={{ borderRadius: '50%' }} src={item.avatar} alt='' />
                             </td>
                             <td>{item.name}</td>
                             <td>
@@ -169,54 +144,52 @@ export default function ProjectManagement() {
                                 onClick={async () => {
                                   const data = {
                                     projectId: text.id,
-                                    userId: item.userId,
-                                  };
+                                    userId: item.userId
+                                  }
 
                                   try {
-                                    await removeUserFromProjectApi(data);
-                                    dispatch(
-                                      deleteMemberAction(text.id, item.userId)
-                                    );
+                                    await removeUserFromProjectApi(data)
+                                    dispatch(deleteMemberAction(text.id, item.userId))
                                     notification.success({
-                                      message: "Xoá user thành công!",
-                                    });
+                                      message: 'Xoá user thành công!'
+                                    })
                                   } catch (error) {
                                     notification.error({
-                                      message: error.response.data.content,
-                                    });
+                                      message: error.response.data.content
+                                    })
                                   }
                                 }}
                                 style={{
-                                  backgroundColor: "red",
-                                  width: "30px",
-                                  height: "30px",
-                                  lineHeight: "30px",
-                                  cursor: "pointer",
-                                  borderRadius: "50%",
-                                  color: "white",
-                                  textAlign: "center",
+                                  backgroundColor: 'red',
+                                  width: '30px',
+                                  height: '30px',
+                                  lineHeight: '30px',
+                                  cursor: 'pointer',
+                                  borderRadius: '50%',
+                                  color: 'white',
+                                  textAlign: 'center'
                                 }}
                               />
                             </td>
                           </tr>
                         </tbody>
                       </table>
-                    );
+                    )
                   }}
-                  trigger="hover"
+                  trigger='hover'
                 >
                   <Avatar src={item.avatar}></Avatar>
                 </Popover>
-              );
+              )
             })}
             {text?.members?.length > 3 ? (
               <Popover
-                placement="topLeft"
-                title={"Members"}
-                trigger="hover"
+                placement='topLeft'
+                title={'Members'}
+                trigger='hover'
                 content={() => {
                   return (
-                    <table className="table">
+                    <table className='table'>
                       <thead>
                         <tr>
                           <th>ID</th>
@@ -234,9 +207,9 @@ export default function ProjectManagement() {
                                 <Avatar
                                   height={30}
                                   width={30}
-                                  style={{ borderRadius: "50%" }}
+                                  style={{ borderRadius: '50%' }}
                                   src={item.avatar}
-                                  alt=""
+                                  alt=''
                                 />
                               </td>
                               <td>{item.name}</td>
@@ -246,191 +219,186 @@ export default function ProjectManagement() {
                                     onClick={async () => {
                                       const data = {
                                         projectId: text.id,
-                                        userId: item.userId,
-                                      };
+                                        userId: item.userId
+                                      }
 
                                       try {
-                                        await removeUserFromProjectApi(data);
-                                        dispatch(
-                                          deleteMemberAction(
-                                            text.id,
-                                            item.userId
-                                          )
-                                        );
+                                        await removeUserFromProjectApi(data)
+                                        dispatch(deleteMemberAction(text.id, item.userId))
                                         notification.success({
-                                          message: "Xoá user thành công!",
-                                        });
+                                          message: 'Xoá user thành công!'
+                                        })
                                       } catch (error) {
                                         notification.error({
-                                          message: error.response.data.content,
-                                        });
+                                          message: error.response.data.content
+                                        })
                                       }
                                     }}
                                     style={{
-                                      backgroundColor: "red",
-                                      width: "30px",
-                                      height: "30px",
-                                      lineHeight: "30px",
-                                      cursor: "pointer",
-                                      borderRadius: "50%",
-                                      color: "white",
-                                      textAlign: "center",
+                                      backgroundColor: 'red',
+                                      width: '30px',
+                                      height: '30px',
+                                      lineHeight: '30px',
+                                      cursor: 'pointer',
+                                      borderRadius: '50%',
+                                      color: 'white',
+                                      textAlign: 'center'
                                     }}
                                   />
                                 </Space>
                               </td>
                             </tr>
-                          );
+                          )
                         })}
                       </tbody>
                     </table>
-                  );
+                  )
                 }}
               >
                 <Avatar>...</Avatar>
               </Popover>
             ) : (
-              ""
+              ''
             )}
             <Popover
-              placement="bottomRight"
-              title={"text"}
+              placement='bottomRight'
+              title={'text'}
               content={() => {
                 return (
                   <div>
                     <AutoComplete
-                      style={{ width: "100%" }}
+                      style={{ width: '100%' }}
                       onSearch={search}
                       value={value}
                       options={userSearch.map((item, index) => {
                         return {
                           label: item.name,
-                          value: item.userId.toString(),
-                        };
+                          value: item.userId.toString()
+                        }
                       })}
                       onChange={(text) => {
-                        setValue(text);
+                        setValue(text)
                       }}
                       onSelect={async (valueSelect, option) => {
-                        setValue(option.label);
+                        setValue(option.label)
                         const data = {
                           projectId: text.id,
-                          userId: valueSelect,
-                        };
+                          userId: valueSelect
+                        }
 
                         try {
-                          await getAssignUserProjectApi(data);
-                          dispatch(setMemberInfoAction(valueSelect, text.id));
+                          await getAssignUserProjectApi(data)
+                          dispatch(setMemberInfoAction(valueSelect, text.id))
                         } catch (error) {
                           notification.error({
-                            message: error.response.data.content,
-                          });
+                            message: error.response.data.content
+                          })
                         }
                       }}
                     />
                   </div>
-                );
+                )
               }}
-              trigger="click"
+              trigger='click'
             >
-              <Button style={{ borderRadius: "50%" }}>+</Button>
+              <Button style={{ borderRadius: '50%' }}>+</Button>
             </Popover>
           </div>
-        );
-      },
+        )
+      }
     },
     {
-      title: "Action",
+      title: 'Action',
       key: 6,
       sorter: {
         compare: (a, b) => a.english - b.english,
-        multiple: 1,
+        multiple: 1
       },
       render: (text) => {
         return (
           <>
             <EditOutlined
               onClick={() => {
-                navigate(`/jira/edit/${text.id}`);
+                navigate(`/jira/edit/${text.id}`)
               }}
               style={{
-                cursor: "pointer",
-                color: "blue",
-                width: "40px",
-                height: "20px",
+                cursor: 'pointer',
+                color: 'blue',
+                width: '40px',
+                height: '20px'
               }}
             />
             <DeleteOutlined
               onClick={async () => {
                 try {
-                  await deleteProjectApi(text.id);
-                  dispatch(deleteProjectAction(text.id));
+                  await deleteProjectApi(text.id)
+                  dispatch(deleteProjectAction(text.id))
                   notification.success({
-                    message: "Xoá thành công!",
-                  });
+                    message: 'Xoá thành công!'
+                  })
                 } catch (error) {
                   notification.error({
-                    message: error.response.data.content,
-                  });
+                    message: error.response.data.content
+                  })
                 }
               }}
               style={{
-                cursor: "pointer",
-                color: "red",
-                width: "40px",
-                height: "20px",
+                cursor: 'pointer',
+                color: 'red',
+                width: '40px',
+                height: '20px'
               }}
             />
           </>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
   const search = async (value) => {
-    const result = await fetchGetUserApi(value);
-    setUserSearch(result.data.content);
-  };
+    const result = await fetchGetUserApi(value)
+    setUserSearch(result.data.content)
+  }
 
   //debounce search
   useEffect(() => {
     const getData = setTimeout(() => {
-      if (pinCode === "") {
-        dispatch(setProjectListAction());
+      if (pinCode === '') {
+        dispatch(setProjectListAction())
       } else {
-        dispatch(filterProjectAction(pinCode));
+        dispatch(filterProjectAction(pinCode))
       }
-    }, 200);
-    return () => clearTimeout(getData);
-  }, [pinCode]);
+    }, 200)
+    return () => clearTimeout(getData)
+  }, [pinCode])
 
   return (
     <>
-      <div className="container py-5">
+      <div className='container py-5'>
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "20px",
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '20px'
           }}
         >
           <h3>Project</h3>
-          <Button type="primary" onClick={() => navigate("/createproject")}>
+          <Button type='primary' onClick={() => navigate('/createproject')}>
             Create Project
           </Button>
         </div>
         <div>
           <Input.Search
-            size="large"
-            className="mb-3"
-            placeholder="Search here"
+            size='large'
+            className='mb-3'
+            placeholder='Search here'
             enterButton
             onChange={(e) => setPinCode(e.target.value)}
           />
 
           {isMobile ? (
             <List
-              pagination={("bottom", "center")}
+              pagination={('bottom', 'center')}
               dataSource={listAllProject.projectList}
               renderItem={(item, index) => (
                 <List.Item key={index}>
@@ -445,23 +413,21 @@ export default function ProjectManagement() {
                       </div>
                     }
                     description={
-                      <div className="text-center">
+                      <div className='text-center'>
                         <p>
-                          <NavLink to={`/jira/projectdetail/${item.id}`}>
-                            {item.projectName}
-                          </NavLink>
+                          <NavLink to={`/jira/projectdetail/${item.id}`}>{item.projectName}</NavLink>
                         </p>
                         <p>{item.categoryName}</p>
                         <p>
-                          <Tag color="green">{item.creator.name}</Tag>
+                          <Tag color='green'>{item.creator.name}</Tag>
                         </p>
                         <Avatar.Group
                           maxCount={2}
                           maxStyle={{
-                            color: "#f56a00",
-                            backgroundColor: "#fde3cf",
-                            cursor: "pointer",
-                            size: "small",
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf',
+                            cursor: 'pointer',
+                            size: 'small'
                           }}
                         >
                           {item?.members?.map((member, index) => {
@@ -469,41 +435,41 @@ export default function ProjectManagement() {
                               <Tooltip title={member.name} key={index}>
                                 <Avatar src={member.avatar} />
                               </Tooltip>
-                            );
+                            )
                           })}
                         </Avatar.Group>
                         <br />
                         <div>
                           <EditOutlined
                             onClick={() => {
-                              navigate(`/jira/edit/${item.id}`);
+                              navigate(`/jira/edit/${item.id}`)
                             }}
                             style={{
-                              cursor: "pointer",
-                              color: "blue",
-                              width: "40px",
-                              height: "20px",
+                              cursor: 'pointer',
+                              color: 'blue',
+                              width: '40px',
+                              height: '20px'
                             }}
                           />
                           <DeleteOutlined
                             onClick={async () => {
                               try {
-                                await deleteProjectApi(item.id);
-                                dispatch(deleteProjectAction(item.id));
+                                await deleteProjectApi(item.id)
+                                dispatch(deleteProjectAction(item.id))
                                 notification.success({
-                                  message: "Xoá thành công!",
-                                });
+                                  message: 'Xoá thành công!'
+                                })
                               } catch (error) {
                                 notification.error({
-                                  message: error.response.data.content,
-                                });
+                                  message: error.response.data.content
+                                })
                               }
                             }}
                             style={{
-                              cursor: "pointer",
-                              color: "red",
-                              width: "40px",
-                              height: "20px",
+                              cursor: 'pointer',
+                              color: 'red',
+                              width: '40px',
+                              height: '20px'
                             }}
                           />
                         </div>
@@ -519,5 +485,5 @@ export default function ProjectManagement() {
         </div>
       </div>
     </>
-  );
+  )
 }

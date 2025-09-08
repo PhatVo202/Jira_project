@@ -1,163 +1,146 @@
-import {
-  Modal,
-  Input,
-  Table,
-  Button,
-  Form,
-  notification,
-  Avatar,
-  Tooltip,
-  List,
-  Breadcrumb,
-} from "antd";
-import React, { useContext, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchStatusApi } from "../../servers/status";
-import { fetchPriorityApi } from "../../servers/priority";
-import { fetchTaskTypeApi } from "../../servers/tasktype";
+import { Modal, Input, Table, Button, Form, notification, Avatar, Tooltip, List, Breadcrumb } from 'antd'
+import React, { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchStatusApi } from '../../servers/status'
+import { fetchPriorityApi } from '../../servers/priority'
+import { fetchTaskTypeApi } from '../../servers/tasktype'
 
-import {
-  getAllMember,
-  setArrProjectAll,
-} from "../../store/actions/projectDetailAction";
+import { getAllMember, setArrProjectAll } from '../../store/actions/projectDetailAction'
 
-import {
-  filterData,
-  setUserManagementAction,
-} from "../../store/actions/userManagementAction";
-import { EditOutlined, DeleteOutlined, UserOutlined } from "@ant-design/icons";
-import { useForm } from "antd/es/form/Form";
-import { deleteUser, editUser } from "../../servers/user";
-import { useMediaQuery } from "react-responsive";
-import { NavLink } from "react-router-dom";
-import { LoadingContext } from "../../contexts/loading/LoadingContext";
+import { filterData, setUserManagementAction } from '../../store/actions/userManagementAction'
+import { EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons'
+import { useForm } from 'antd/es/form/Form'
+import { deleteUser, editUser } from '../../servers/user'
+import { useMediaQuery } from 'react-responsive'
+import { NavLink } from 'react-router-dom'
+import { LoadingContext } from '../../contexts/loading/LoadingContext'
 
 export default function UserManagement() {
-  const [form] = useForm();
-  const [_, setLoadingState] = useContext(LoadingContext);
-  const [values, setValues] = useState({});
-  const userList = useSelector((state) => state.userManagementReducer);
-  const [modal2Open, setModal2Open] = useState(false);
-  const dispatch = useDispatch();
-  const [pinCode, setPinCode] = useState("");
-  const [status, setStatus] = useState([]);
-  const [priority, setPriority] = useState([]);
-  const [taskType, setTaskType] = useState([]);
+  const [form] = useForm()
+  const [_, setLoadingState] = useContext(LoadingContext)
+  const [values, setValues] = useState({})
+  const userList = useSelector((state) => state.userManagementReducer)
+  const [modal2Open, setModal2Open] = useState(false)
+  const dispatch = useDispatch()
+  const [pinCode, setPinCode] = useState('')
+  const [status, setStatus] = useState([])
+  const [priority, setPriority] = useState([])
+  const [taskType, setTaskType] = useState([])
   useEffect(() => {
     // setTimeout(() => {
     //   setLoadingState({ isLoading: true });
     // }, 200);
-    getUserList();
-    getAllProjectList();
-    getStatusAll();
-    getPriorityAll();
-    getTaskTypeAll();
-    dispatch(getAllMember(""));
+    getUserList()
+    getAllProjectList()
+    getStatusAll()
+    getPriorityAll()
+    getTaskTypeAll()
+    dispatch(getAllMember(''))
     // setTimeout(() => {
     //   setLoadingState({ isLoading: false });
     // }, 2000);
-  }, []);
+  }, [])
 
   const getAllProjectList = () => {
-    dispatch(setArrProjectAll());
-  };
+    dispatch(setArrProjectAll())
+  }
 
   const getStatusAll = async () => {
-    const result = await fetchStatusApi();
-    setStatus(result.data.content);
-  };
+    const result = await fetchStatusApi()
+    setStatus(result.data.content)
+  }
 
   const getPriorityAll = async () => {
-    const result = await fetchPriorityApi();
-    setPriority(result.data.content);
-  };
+    const result = await fetchPriorityApi()
+    setPriority(result.data.content)
+  }
 
   const getTaskTypeAll = async () => {
-    const result = await fetchTaskTypeApi();
-    setTaskType(result.data.content);
-  };
+    const result = await fetchTaskTypeApi()
+    setTaskType(result.data.content)
+  }
 
   const getUserList = async () => {
-    dispatch(setUserManagementAction());
-  };
+    dispatch(setUserManagementAction())
+  }
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "1",
+      title: 'Name',
+      dataIndex: 'name',
+      key: '1'
     },
     {
-      title: "User Id",
-      dataIndex: "userId",
-      key: "2",
+      title: 'User Id',
+      dataIndex: 'userId',
+      key: '2'
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "3",
+      title: 'Email',
+      dataIndex: 'email',
+      key: '3'
     },
     {
-      title: "Phone number",
-      dataIndex: "phoneNumber",
-      key: "4",
+      title: 'Phone number',
+      dataIndex: 'phoneNumber',
+      key: '4'
     },
     {
-      title: "Action",
-      key: "5",
+      title: 'Action',
+      key: '5',
       render: (text) => {
         return (
           <div>
             <EditOutlined
-              style={{ color: "blue", fontSize: "17px", cursor: "pointer" }}
+              style={{ color: 'blue', fontSize: '17px', cursor: 'pointer' }}
               onClick={() => {
                 setValues({
                   userId: text.userId,
                   name: text.name,
                   phoneNumber: text.phoneNumber,
-                  email: text.email,
-                });
+                  email: text.email
+                })
                 form.setFieldsValue({
                   userId: text.userId,
                   name: text.name,
                   phoneNumber: text.phoneNumber,
-                  email: text.email,
-                });
-                setModal2Open(true);
+                  email: text.email
+                })
+                setModal2Open(true)
               }}
             />
 
             <DeleteOutlined
               onClick={async () => {
                 try {
-                  await deleteUser(text.userId);
+                  await deleteUser(text.userId)
                   notification.success({
-                    message: "Xoá thành công!",
-                  });
-                  dispatch(setUserManagementAction("", text.userId));
+                    message: 'Xoá thành công!'
+                  })
+                  dispatch(setUserManagementAction('', text.userId))
                 } catch (error) {
                   notification.error({
-                    message: error.response.data.content,
-                  });
+                    message: error.response.data.content
+                  })
                 }
               }}
               style={{
-                color: "red",
-                marginLeft: "20px",
-                fontSize: "17px",
-                cursor: "pointer",
+                color: 'red',
+                marginLeft: '20px',
+                fontSize: '17px',
+                cursor: 'pointer'
               }}
             />
           </div>
-        );
-      },
-    },
-  ];
+        )
+      }
+    }
+  ]
 
-  const [componentSize, setComponentSize] = useState("default");
+  const [componentSize, setComponentSize] = useState('default')
   const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
+    setComponentSize(size)
+  }
 
   const handleFinish = async (value) => {
     const data = {
@@ -165,40 +148,40 @@ export default function UserManagement() {
       name: value.name,
       phoneNumber: value.phoneNumber,
       email: value.email,
-      passWord: value.passWord,
-    };
+      passWord: value.passWord
+    }
     try {
-      await editUser(data);
+      await editUser(data)
       notification.success({
-        message: "Cập nhật thành công!",
-      });
-      setModal2Open(false);
-      dispatch(setUserManagementAction(data, ""));
+        message: 'Cập nhật thành công!'
+      })
+      setModal2Open(false)
+      dispatch(setUserManagementAction(data, ''))
     } catch (error) {
       notification.error({
-        message: error.response.data.content,
-      });
+        message: error.response.data.content
+      })
     }
-  };
+  }
 
-  const isMobile = useMediaQuery({ query: `(max-width: 624px)` });
+  const isMobile = useMediaQuery({ query: `(max-width: 624px)` })
 
   useEffect(() => {
     const getData = setTimeout(() => {
-      dispatch(filterData(pinCode));
-    }, 200);
-    return () => clearTimeout(getData);
-  }, [pinCode]);
+      dispatch(filterData(pinCode))
+    }, 200)
+    return () => clearTimeout(getData)
+  }, [pinCode])
 
   return (
     <div>
       {/* <Header /> */}
-      <div className="container py-5">
+      <div className='container py-5'>
         <Breadcrumb
-          className="py-3"
+          className='py-3'
           items={[
             {
-              title: <NavLink to="/projectmanagement">Project</NavLink>,
+              title: <NavLink to='/projectmanagement'>Project</NavLink>
             },
             {
               title: (
@@ -206,21 +189,21 @@ export default function UserManagement() {
                   <UserOutlined />
                   <span>User Management</span>
                 </>
-              ),
-            },
+              )
+            }
           ]}
         />
         <div>
           <Input.Search
-            className="mb-3"
-            size="large"
-            placeholder="Search here"
+            className='mb-3'
+            size='large'
+            placeholder='Search here'
             enterButton
             onChange={(e) => setPinCode(e.target.value)}
           />
           {isMobile ? (
             <List
-              pagination={("bottom", "center")}
+              pagination={('bottom', 'center')}
               dataSource={userList.listUser}
               renderItem={(item, index) => (
                 <List.Item key={index}>
@@ -235,7 +218,7 @@ export default function UserManagement() {
                       </div>
                     }
                     description={
-                      <div className="text-center">
+                      <div className='text-center'>
                         <p>{item.name}</p>
                         <p>{item.userId}</p>
                         <p>{item.email}</p>
@@ -243,10 +226,10 @@ export default function UserManagement() {
                         <Avatar.Group
                           maxCount={2}
                           maxStyle={{
-                            color: "#f56a00",
-                            backgroundColor: "#fde3cf",
-                            cursor: "pointer",
-                            size: "small",
+                            color: '#f56a00',
+                            backgroundColor: '#fde3cf',
+                            cursor: 'pointer',
+                            size: 'small'
                           }}
                         >
                           {item?.members?.map((member, index) => {
@@ -254,53 +237,51 @@ export default function UserManagement() {
                               <Tooltip title={member.name} key={index}>
                                 <Avatar src={member.avatar} />
                               </Tooltip>
-                            );
+                            )
                           })}
                         </Avatar.Group>
                         <div>
                           <EditOutlined
                             style={{
-                              color: "blue",
-                              fontSize: "17px",
-                              cursor: "pointer",
+                              color: 'blue',
+                              fontSize: '17px',
+                              cursor: 'pointer'
                             }}
                             onClick={() => {
                               setValues({
                                 userId: item.userId,
                                 name: item.name,
                                 phoneNumber: item.phoneNumber,
-                                email: item.email,
-                              });
+                                email: item.email
+                              })
                               form.setFieldsValue({
                                 userId: item.userId,
                                 name: item.name,
                                 phoneNumber: item.phoneNumber,
-                                email: item.email,
-                              });
-                              setModal2Open(true);
+                                email: item.email
+                              })
+                              setModal2Open(true)
                             }}
                           />
                           <DeleteOutlined
                             onClick={async () => {
                               try {
-                                await deleteUser(item.userId);
+                                await deleteUser(item.userId)
                                 notification.success({
-                                  message: "Xoá thành công!",
-                                });
-                                dispatch(
-                                  setUserManagementAction("", item.userId)
-                                );
+                                  message: 'Xoá thành công!'
+                                })
+                                dispatch(setUserManagementAction('', item.userId))
                               } catch (error) {
                                 notification.error({
-                                  message: error.response.data.content,
-                                });
+                                  message: error.response.data.content
+                                })
                               }
                             }}
                             style={{
-                              color: "red",
-                              marginLeft: "20px",
-                              fontSize: "17px",
-                              cursor: "pointer",
+                              color: 'red',
+                              marginLeft: '20px',
+                              fontSize: '17px',
+                              cursor: 'pointer'
                             }}
                           />
                         </div>
@@ -315,58 +296,52 @@ export default function UserManagement() {
           )}
         </div>
       </div>
-      <Modal
-        footer={null}
-        title="Edit User"
-        centered
-        open={modal2Open}
-        onCancel={() => setModal2Open(false)}
-      >
+      <Modal footer={null} title='Edit User' centered open={modal2Open} onCancel={() => setModal2Open(false)}>
         <Form
           form={form}
           labelCol={{
-            span: 4,
+            span: 4
           }}
           wrapperCol={{
-            span: 14,
+            span: 14
           }}
-          layout="horizontal"
+          layout='horizontal'
           initialValues={{
-            size: componentSize,
+            size: componentSize
           }}
           onFinish={handleFinish}
           onValuesChange={onFormLayoutChange}
           size={componentSize}
           style={{
-            maxWidth: 600,
+            maxWidth: 600
           }}
         >
-          <Form.Item label="Id" name="userId">
+          <Form.Item label='Id' name='userId'>
             <Input disabled />
           </Form.Item>
-          <Form.Item label="Email" name="email">
+          <Form.Item label='Email' name='email'>
             <Input />
           </Form.Item>
-          <Form.Item label="Name" name="name">
+          <Form.Item label='Name' name='name'>
             <Input />
           </Form.Item>
-          <Form.Item label="Phone Number" name="phoneNumber">
+          <Form.Item label='Phone Number' name='phoneNumber'>
             <Input />
           </Form.Item>
-          <Form.Item label="Password" name="passWord">
+          <Form.Item label='Password' name='passWord'>
             <Input />
           </Form.Item>
 
-          <div className="text-right">
-            <Button htmlType="submit" type="primary">
+          <div className='text-right'>
+            <Button htmlType='submit' type='primary'>
               Update
             </Button>
-            <Button className="ml-2" onClick={() => setModal2Open(false)}>
+            <Button className='ml-2' onClick={() => setModal2Open(false)}>
               Cancel
             </Button>
           </div>
         </Form>
       </Modal>
     </div>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-import { fetchAllProjectApi } from "../servers/project";
+import { fetchAllProjectApi } from '../servers/project'
 
 export const useProjectAll = () => {
-  const [dataProject, setDataProject] = useState([]);
+  const [dataProject, setDataProject] = useState([])
 
   useEffect(() => {
-    getAllProject();
-  }, []);
+    getAllProject()
+  }, [])
 
   const getAllProject = async () => {
-    const result = await fetchAllProjectApi();
+    const result = await fetchAllProjectApi()
 
-    setDataProject(result.data.content);
-  };
+    setDataProject(result.data.content)
+  }
 
-  return dataProject;
-};
+  return dataProject
+}

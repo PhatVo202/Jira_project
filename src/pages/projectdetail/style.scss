@@ -1,17 +1,16 @@
-.text-comment{
-    cursor: pointer;
-
+.text-comment {
+  cursor: pointer;
 }
 
-.text-comment:hover{
-    text-decoration: underline;
+.text-comment:hover {
+  text-decoration: underline;
 }
 
-.collapse__bg-hover:hover{
-    background: rgba(229,231,235,1);
-    transition: all 0.5 ease-in;
+.collapse__bg-hover:hover {
+  background: rgba(229, 231, 235, 1);
+  transition: all 0.5 ease-in;
 }
 
-.ant-collapse-header{
-    padding: 0 !important;
+.ant-collapse-header {
+  padding: 0 !important;
 }

@@ -1,11 +1,11 @@
-import { fetchAllCommentApi, insertCommentApi } from "../../servers/comment";
+import { fetchAllCommentApi, insertCommentApi } from '../../servers/comment'
 import {
   fetchAllProjectApi,
   fetchProjectKeyApi,
   fetchProjectDetailsApi,
-  fetchTaskDetailApi,
-} from "../../servers/project";
-import { fetchGetUserApi, getUserProjectIdApi } from "../../servers/user";
+  fetchTaskDetailApi
+} from '../../servers/project'
+import { fetchGetUserApi, getUserProjectIdApi } from '../../servers/user'
 import {
   ADD_MEMBER_BOARD,
   DELETE_COMMENT,
@@ -24,67 +24,67 @@ import {
   SET_MEMBER_INFO,
   SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
-  SET_TASKDETAIL,
-} from "../types/projectDetailType";
+  SET_TASKDETAIL
+} from '../types/projectDetailType'
 
 export const setProjectListAction = () => {
   return async (dispatch) => {
-    const result = await fetchAllProjectApi();
+    const result = await fetchAllProjectApi()
     dispatch({
       type: SET_PROJECT_LIST,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const deleteProjectAction = (id) => {
   return {
     type: DELETE_PROJECT,
-    payload: id,
-  };
-};
+    payload: id
+  }
+}
 
-export const filterProjectAction = (keyword = "") => {
+export const filterProjectAction = (keyword = '') => {
   return async (dispatch) => {
-    const result = await fetchProjectKeyApi(keyword);
+    const result = await fetchProjectKeyApi(keyword)
 
     dispatch({
       type: FILTER_PROJECT,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 //add Member
 export const setMemberInfoAction = (keyword, projectId) => {
   return async (dispatch) => {
-    const result = await fetchGetUserApi(keyword);
-    console.log(result);
+    const result = await fetchGetUserApi(keyword)
+    console.log(result)
 
     dispatch({
       type: SET_MEMBER_INFO,
       payload: {
         members: result.data.content,
-        projectId: projectId,
-      },
-    });
-  };
-};
+        projectId: projectId
+      }
+    })
+  }
+}
 
 //add Member Board
 export const setMemberBoardAction = (id, userId) => {
   return async (dispatch) => {
-    const result = await fetchGetUserApi(id);
+    const result = await fetchGetUserApi(id)
 
     dispatch({
       type: ADD_MEMBER_BOARD,
       payload: {
         members: result.data.content,
-        userId: userId,
-      },
-    });
-  };
-};
+        userId: userId
+      }
+    })
+  }
+}
 
 //delete Member
 export const deleteMemberAction = (projectId, userId) => {
@@ -92,122 +92,122 @@ export const deleteMemberAction = (projectId, userId) => {
     type: DELETE_MEMBER_PROJECT,
     payload: {
       projectId: projectId,
-      userId: userId,
-    },
-  };
-};
+      userId: userId
+    }
+  }
+}
 
 //delete Member board
 export const removeMemberBoard = (userId) => {
   return {
     type: REMOVE_MEMBER_BOARD,
-    payload: userId,
-  };
-};
+    payload: userId
+  }
+}
 
 export const setArrProjectAll = () => {
   return async (dispatch) => {
-    const result = await fetchAllProjectApi();
+    const result = await fetchAllProjectApi()
     dispatch({
       type: GET_ALL_PROJECT,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const getAllMember = (keyword) => {
   return async (dispatch) => {
-    const result = await fetchGetUserApi(keyword);
+    const result = await fetchGetUserApi(keyword)
     dispatch({
       type: GET_ALL_MEMBER,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const getMemberByProjectId = (projectId) => {
   return async (dispatch) => {
-    const result = await getUserProjectIdApi(projectId);
+    const result = await getUserProjectIdApi(projectId)
     dispatch({
       type: GET_USER_BY_PROJECTID,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const setProjectDetailArrAction = (id) => {
   return async (dispatch) => {
-    const result = await fetchProjectDetailsApi(id);
+    const result = await fetchProjectDetailsApi(id)
     dispatch({
       type: SET_PROJECT_DETAIL_ARR,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 //search Members Board
 
 export const searchMemberBoard = (keyword) => {
   return async (dispatch) => {
-    const result = await fetchGetUserApi(keyword);
+    const result = await fetchGetUserApi(keyword)
     dispatch({
       type: SEARCH_MEMBER_BOARD,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const setTaskDetail = (id) => {
   return async (dispatch) => {
-    const result = await fetchTaskDetailApi(id);
+    const result = await fetchTaskDetailApi(id)
     dispatch({
       type: SET_TASKDETAIL,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 //COMMENT
 export const setAllComment = (taskId) => {
   return async (dispatch) => {
-    const result = await fetchAllCommentApi(taskId);
+    const result = await fetchAllCommentApi(taskId)
     dispatch({
       type: SET_COMMENT_ALL,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const inserCommentAction = (data) => {
   return async (dispatch) => {
-    const result = await insertCommentApi(data);
+    const result = await insertCommentApi(data)
     dispatch({
       type: INSERT_COMMENT,
-      payload: result.data.content,
-    });
-  };
-};
+      payload: result.data.content
+    })
+  }
+}
 
 export const editCommentAction = (id, content) => {
   return {
     type: EDIT_COMMENT,
     payload: {
       id: id,
-      content: content,
-    },
-  };
-};
+      content: content
+    }
+  }
+}
 
 export const deleteCommentAction = (id) => {
   return {
     type: DELETE_COMMENT,
-    payload: id,
-  };
-};
+    payload: id
+  }
+}
 
 export const setDescriptionAction = (desc) => {
   return {
     type: SET_DESCRIPTION,
-    payload: desc,
-  };
-};
+    payload: desc
+  }
+}

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 // JSS ( CSS IN JS )
 
@@ -11,4 +11,4 @@ export const WrapperSpin = styled.div`
   width: 100%;
   background: ${(props) => props.customBackground};
   z-index: 999;
-`;
+`
