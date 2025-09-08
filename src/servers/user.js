@@ -1,14 +1,14 @@
 import { axiosRequest } from '../configs/axios.config'
 
-export const loginApi = (information) => {
-  return axiosRequest({
+export const loginApi = async (information) => {
+  return await axiosRequest({
     url: '/Users/signin',
     method: 'POST',
     data: information
   })
 }
 
-export const registerApi = (information) => {
+export const registerApi = async (information) => {
   return axiosRequest({
     url: '/Users/signup',
     method: 'POST',
@@ -16,37 +16,37 @@ export const registerApi = (information) => {
   })
 }
 
-export const getUserProjectIdApi = (id) => {
-  return axiosRequest({
+export const getUserProjectIdApi = async (id) => {
+  return await axiosRequest({
     url: `/Users/getUserByProjectId?idProject=${id}`,
     method: 'GET'
   })
 }
 
-export const fetchGetUserApi = (key) => {
-  return axiosRequest({
+export const fetchGetUserApi = async (key) => {
+  return await axiosRequest({
     url: `/Users/getUser?keyword=${key}`, //id
     method: 'GET'
   })
 }
 
-export const fetchGetAllUserList = () => {
-  return axiosRequest({
+export const fetchGetAllUserList = async () => {
+  return await axiosRequest({
     url: `/Users/getUser`, //id
     method: 'GET'
   })
 }
 
-export const editUser = (data) => {
-  return axiosRequest({
+export const editUser = async (data) => {
+  return await axiosRequest({
     url: `/Users/editUser`, //id
     method: 'PUT',
     data: data
   })
 }
 
-export const deleteUser = (id) => {
-  return axiosRequest({
+export const deleteUser = async (id) => {
+  return await axiosRequest({
     url: `/Users/deleteUser?id=${id}`, //id
     method: 'DELETE'
   })

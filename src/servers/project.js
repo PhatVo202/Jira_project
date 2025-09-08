@@ -1,146 +1,146 @@
 import { axiosRequest } from '../configs/axios.config'
 
-export const fetchAllProjectApi = () => {
-  return axiosRequest({
+export const fetchAllProjectApi = async () => {
+  return await axiosRequest({
     url: `/Project/getAllProject`,
     method: 'GET'
     // ?keyword=1
   })
 }
 
-export const fetchProjectKeyApi = (keyword) => {
-  return axiosRequest({
+export const fetchProjectKeyApi = async (keyword) => {
+  return await axiosRequest({
     url: `/Project/getAllProject?keyword=${keyword}`,
     method: 'GET'
   })
 }
 
-export const fetchProjectDetailsApi = (id) => {
-  return axiosRequest({
+export const fetchProjectDetailsApi = async (id) => {
+  return await axiosRequest({
     url: `/Project/getProjectDetail?id=${id}`,
     method: 'GET'
   })
 }
 
-export const fetchProjectCategorylsApi = () => {
-  return axiosRequest({
+export const fetchProjectCategorylsApi = async () => {
+  return await axiosRequest({
     url: `/ProjectCategory`,
     method: 'GET'
   })
 }
 
-export const createProjectAuthorizeApi = (data) => {
-  return axiosRequest({
+export const createProjectAuthorizeApi = async (data) => {
+  return await axiosRequest({
     url: `/Project/createProjectAuthorize`,
     method: 'POST',
     data: data
   })
 }
 
-export const deleteProjectApi = (id) => {
-  return axiosRequest({
+export const deleteProjectApi = async (id) => {
+  return await axiosRequest({
     url: `/Project/deleteProject?projectId=${id}`,
     method: 'DELETE'
   })
 }
 
-export const updateProjectApi = (id, data) => {
-  return axiosRequest({
+export const updateProjectApi = async (id, data) => {
+  return await axiosRequest({
     url: `/Project/updateProject?projectId=${id}`,
     method: 'PUT',
     data: data
   })
 }
 
-export const getAssignUserProjectApi = (data) => {
-  return axiosRequest({
+export const getAssignUserProjectApi = async (data) => {
+  return await axiosRequest({
     url: `/Project/assignUserProject`,
     method: 'POST',
     data: data
   })
 }
 
-export const removeUserFromProjectApi = (data) => {
-  return axiosRequest({
+export const removeUserFromProjectApi = async (data) => {
+  return await axiosRequest({
     url: `/Project/removeUserFromProject`,
     method: 'POST',
     data: data
   })
 }
 
-export const createTaskApi = (data) => {
-  return axiosRequest({
+export const createTaskApi = async (data) => {
+  return await axiosRequest({
     url: `/Project/createTask`,
     method: 'POST',
     data: data
   })
 }
 
-export const fetchTaskDetailApi = (id) => {
-  return axiosRequest({
+export const fetchTaskDetailApi = async (id) => {
+  return await axiosRequest({
     url: `/Project/getTaskDetail?taskId=${id}`,
     method: 'GET'
   })
 }
 
-export const removeTaskApi = (id) => {
-  return axiosRequest({
+export const removeTaskApi = async (id) => {
+  return await axiosRequest({
     url: `/Project/removeTask?taskId=${id}`,
     method: 'DELETE'
   })
 }
 
 //update Task
-export const updatePriorityApi = (data) => {
-  return axiosRequest({
+export const updatePriorityApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/updatePriority',
     method: 'PUT',
     data: data
   })
 }
 
-export const updateAssignUserTaskApi = (data) => {
-  return axiosRequest({
+export const updateAssignUserTaskApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/assignUserTask',
     method: 'POST',
     data: data
   })
 }
 
-export const updateEstimateApi = (data) => {
-  return axiosRequest({
+export const updateEstimateApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/updateEstimate',
     method: 'PUT',
     data: data
   })
 }
 
-export const updateTimeTrackingApi = (data) => {
-  return axiosRequest({
+export const updateTimeTrackingApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/updateTimeTracking',
     method: 'PUT',
     data: data
   })
 }
 
-export const updateStatusApi = (data) => {
-  return axiosRequest({
+export const updateStatusApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/updateStatus',
     method: 'PUT',
     data: data
   })
 }
 
-export const updateDescriptionApi = (data) => {
-  return axiosRequest({
+export const updateDescriptionApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/updateDescription',
     method: 'PUT',
     data: data
   })
 }
 
-export const updateTaskApi = (data) => {
-  return axiosRequest({
+export const updateTaskApi = async (data) => {
+  return await axiosRequest({
     url: '/Project/updateTask',
     method: 'POST',
     data: data

@@ -1,29 +1,29 @@
 import { axiosRequest } from '../configs/axios.config'
 
-export const fetchAllCommentApi = (id) => {
-  return axiosRequest({
+export const fetchAllCommentApi = async (id) => {
+  return await axiosRequest({
     url: `/Comment/getAll?taskId=${id}`,
     method: 'GET'
   })
 }
 
-export const insertCommentApi = (data) => {
-  return axiosRequest({
+export const insertCommentApi = async (data) => {
+  return await axiosRequest({
     url: `/Comment/insertComment`,
     method: 'POST',
     data: data
   })
 }
 
-export const updateCommentApi = (id, content) => {
-  return axiosRequest({
+export const updateCommentApi = async (id, content) => {
+  return await axiosRequest({
     url: `/Comment/updateComment?id=${id}&contentComment=${content}`,
     method: 'PUT'
   })
 }
 
-export const deleteCommentApi = (id) => {
-  return axiosRequest({
+export const deleteCommentApi = async (id) => {
+  return await axiosRequest({
     url: `/Comment/deleteComment?idComment=${id}`,
     method: 'DELETE'
   })

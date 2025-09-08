@@ -160,25 +160,25 @@ export default function ProjectDetail() {
     dispatch(inserCommentAction(data))
   }
 
-  const handleDragEnd = (result) => {
-    let { source, destination } = result
+  const handleDragEnd = async (result) => {
+    let { source, destination, draggableId } = result
+
     if (!destination) {
       return
     }
-    // if (
-    //   source.index === destination.index &&
-    //   source.droppableId === destination.droppableId
-    // ) {
-    //   return;
-    // }
 
-    const dataUpdateStatus = {
-      taskId: Number(result.draggableId),
-      statusId: destination.droppableId
+    if (source.droppableId === destination.droppableId && source.index === destination.index) return
+
+    try {
+      await updateStatusApi({
+        taskId: Number(draggableId),
+        statusId: Number(destination.droppableId)
+      })
+      dispatch(setProjectDetailArrAction(param.id)) // refetch để UI cập nhật
+      message.success('Update Task Successfully!')
+    } catch (e) {
+      message.error('Cập nhật trạng thái thất bại')
     }
-
-    dispatch(updateStatusApi(dataUpdateStatus))
-    // dispatch(setStatusDragDropAction(fetchProjectDetailsApi(param.id)));
   }
 
   return (
@@ -190,7 +190,6 @@ export default function ProjectDetail() {
             {
               title: <NavLink to='/projectmanagement'>Projects</NavLink>
             },
-
             {
               title: projectDetail.projectName
             }
@@ -361,15 +360,19 @@ export default function ProjectDetail() {
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className='row'>
             {projectDetail?.lstTask?.map((item, index) => {
+              console.log({ item: item })
               return (
-                <Droppable key={item.taskId} droppableId={item.statusId}>
-                  {(provided) => {
+                <Droppable key={String(item.statusId)} droppableId={String(item.statusId)}>
+                  {(provided, snapshot) => {
                     return (
                       <div
                         ref={provided.innerRef}
                         {...provided.droppableProps}
+                        {...provided.dragHandleProps}
                         className='col-12 col-sm-6 mt-3 col-lg-3 mt-lg-0 col-xl-3'
-                        key={index}
+                        onClick={(e) => {
+                          if (snapshot.isDragging) return // đang kéo thì không mở modal
+                        }}
                       >
                         <div
                           onClick={() => {
@@ -378,8 +381,8 @@ export default function ProjectDetail() {
                           }}
                           className='bg-light pl-2 pt-2 font-weight-bold'
                           style={{
-                            // height: "500px",
-                            maxHeight: '500px',
+                            minHeight: '210px',
+                            padding: '20px',
                             cursor: 'grab'
                           }}
                         >

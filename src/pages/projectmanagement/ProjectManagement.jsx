@@ -383,7 +383,7 @@ export default function ProjectManagement() {
           }}
         >
           <h3>Project</h3>
-          <Button type='primary' onClick={() => navigate('/createproject')}>
+          <Button type='primary' onClick={() => navigate('/jira/createproject')}>
             Create Project
           </Button>
         </div>
