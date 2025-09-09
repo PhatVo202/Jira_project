@@ -1,30 +1,26 @@
-import React from 'react'
-import { useRoutes } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
+import { Navigate, useRoutes } from 'react-router-dom'
+
 import AuthGuard from '../guards/AuthGuard'
 import NoAuthGuard from '../guards/NoAuthGuard'
-import CreateProject from '../pages/createproject/CreateProject'
-import EditProject from '../pages/editproject/EditProject'
 
-import Login from '../pages/login/Login'
-import PageNotFound from '../pages/pageNotFound/PageNotFound'
-import Profile from '../pages/profile/Profile'
-import ProjectDetail from '../pages/projectdetail/ProjectDetail'
-import ProjectManagement from '../pages/projectmanagement/ProjectManagement'
-import Register from '../pages/register/Register'
-import UserManagement from '../pages/usermanagement/UserManagement'
-import HomeLayout from '../layouts/home/HomeLayout'
+const Login = lazy(() => import('../pages/login/Login'))
+const Register = lazy(() => import('../pages/register/Register'))
+const ProjectManagement = lazy(() => import('../pages/projectmanagement/ProjectManagement'))
+const UserManagement = lazy(() => import('../pages/usermanagement/UserManagement'))
+const Profile = lazy(() => import('../pages/profile/Profile'))
+const CreateProject = lazy(() => import('../pages/createproject/CreateProject'))
+const ProjectDetail = lazy(() => import('../pages/projectdetail/ProjectDetail'))
+const EditProject = lazy(() => import('../pages/editproject/EditProject'))
+const PageNotFound = lazy(() => import('../pages/pageNotFound/PageNotFound'))
+
+const HomeLayout = lazy(() => import('../layouts/home/HomeLayout'))
 
 export default function Router() {
   const routing = useRoutes([
     {
       path: '/',
-      element: <NoAuthGuard />,
-      children: [
-        {
-          path: '/',
-          element: <Login />
-        }
-      ]
+      element: <Navigate to='/login' replace />
     },
     {
       path: '/login',
@@ -32,7 +28,11 @@ export default function Router() {
       children: [
         {
           path: '/login',
-          element: <Login />
+          element: (
+            <Suspense>
+              <Login />
+            </Suspense>
+          )
         }
       ]
     },
@@ -42,13 +42,21 @@ export default function Router() {
       children: [
         {
           path: '/register',
-          element: <Register />
+          element: (
+            <Suspense>
+              <Register />
+            </Suspense>
+          )
         }
       ]
     },
     {
       path: '/jira',
-      element: <HomeLayout />,
+      element: (
+        <Suspense>
+          <HomeLayout />
+        </Suspense>
+      ),
       children: [
         {
           path: '/jira',
@@ -56,27 +64,51 @@ export default function Router() {
           children: [
             {
               path: '/jira/projectmanagement',
-              element: <ProjectManagement />
+              element: (
+                <Suspense>
+                  <ProjectManagement />
+                </Suspense>
+              )
             },
             {
               path: '/jira/user',
-              element: <UserManagement />
+              element: (
+                <Suspense>
+                  <UserManagement />
+                </Suspense>
+              )
             },
             {
               path: '/jira/my-profile',
-              element: <Profile />
+              element: (
+                <Suspense>
+                  <Profile />
+                </Suspense>
+              )
             },
             {
               path: '/jira/createproject',
-              element: <CreateProject />
+              element: (
+                <Suspense>
+                  <CreateProject />
+                </Suspense>
+              )
             },
             {
               path: '/jira/projectdetail/:id',
-              element: <ProjectDetail />
+              element: (
+                <Suspense>
+                  <ProjectDetail />
+                </Suspense>
+              )
             },
             {
               path: '/jira/edit/:id',
-              element: <EditProject />
+              element: (
+                <Suspense>
+                  <EditProject />
+                </Suspense>
+              )
             }
           ]
         }
@@ -84,7 +116,11 @@ export default function Router() {
     },
     {
       path: '*',
-      element: <PageNotFound />
+      element: (
+        <Suspense>
+          <PageNotFound />
+        </Suspense>
+      )
     }
   ])
 

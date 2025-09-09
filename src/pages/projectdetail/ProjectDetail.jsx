@@ -360,7 +360,6 @@ export default function ProjectDetail() {
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className='row'>
             {projectDetail?.lstTask?.map((item, index) => {
-              console.log({ item: item })
               return (
                 <Droppable key={String(item.statusId)} droppableId={String(item.statusId)}>
                   {(provided, snapshot) => {
@@ -599,7 +598,6 @@ export default function ProjectDetail() {
                                 <Editor
                                   onChange={(value) => {
                                     setEditComment(value.level.content)
-                                    console.log(value.level.content)
                                   }}
                                   onInit={(evt, editor) => (editoRef.current = editor)}
                                 />
@@ -647,7 +645,6 @@ export default function ProjectDetail() {
                   await updateStatusApi(data)
                   dispatch(setProjectDetailArrAction(param.id))
                 }}
-                // onChange={(value) => console.log(value)}
                 placeholder={statusName}
                 placement='bottomRight'
               >
@@ -670,11 +667,6 @@ export default function ProjectDetail() {
                       <Select
                         style={{ width: '100%' }}
                         mode='multiple'
-                        // defaultValue={memberOptions}
-                        // value={membersOptions}
-                        // value={membersOptions}
-                        // defaultValue={membersOptions}
-                        onDeselect={(e) => console.log(e)}
                         placeholder={taskDetail?.assigness?.name}
                         onSelect={async (value) => {
                           const data = {
@@ -690,7 +682,6 @@ export default function ProjectDetail() {
                             typeId: taskDetail.typeId,
                             priorityId: taskDetail.priorityId
                           }
-                          console.log(data)
 
                           setListUser(data)
                         }}

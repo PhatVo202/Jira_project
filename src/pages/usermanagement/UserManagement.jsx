@@ -1,5 +1,5 @@
 import { Modal, Input, Table, Button, Form, notification, Avatar, Tooltip, List, Breadcrumb } from 'antd'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchStatusApi } from '../../servers/status'
 import { fetchPriorityApi } from '../../servers/priority'
@@ -31,7 +31,7 @@ export default function UserManagement() {
     //   setLoadingState({ isLoading: true });
     // }, 200);
     getUserList()
-    getAllProjectList()
+    // getAllProjectList()
     getStatusAll()
     getPriorityAll()
     getTaskTypeAll()
@@ -41,9 +41,9 @@ export default function UserManagement() {
     // }, 2000);
   }, [])
 
-  const getAllProjectList = () => {
-    dispatch(setArrProjectAll())
-  }
+  // const getAllProjectList = () => {
+  //   dispatch(setArrProjectAll())
+  // }
 
   const getStatusAll = async () => {
     const result = await fetchStatusApi()
@@ -64,7 +64,7 @@ export default function UserManagement() {
     dispatch(setUserManagementAction())
   }
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: 'Name',
       dataIndex: 'name',
@@ -135,7 +135,7 @@ export default function UserManagement() {
         )
       }
     }
-  ]
+  ])
 
   const [componentSize, setComponentSize] = useState('default')
   const onFormLayoutChange = ({ size }) => {

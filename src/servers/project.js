@@ -4,7 +4,6 @@ export const fetchAllProjectApi = async () => {
   return await axiosRequest({
     url: `/Project/getAllProject`,
     method: 'GET'
-    // ?keyword=1
   })
 }
 

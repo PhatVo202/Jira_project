@@ -8,7 +8,8 @@ import {
   FundViewOutlined,
   UserOutlined,
   SolutionOutlined,
-  TeamOutlined
+  TeamOutlined,
+  LogoutOutlined
 } from '@ant-design/icons'
 import {
   Button,
@@ -40,7 +41,7 @@ import { fetchTaskTypeApi } from '../../servers/tasktype'
 import { setUserInfoAction } from '../../store/actions/userAction'
 
 const HomeLayout = () => {
-  const { Header, Content, Footer, Sider } = Layout
+  const { Content, Footer, Sider } = Layout
   const { userInfo } = useSelector((state) => state.userReducer)
   const { arrProject } = useSelector((state) => state.projectDetailReducer)
   const { arrMember } = useSelector((state) => state.projectDetailReducer)
@@ -58,11 +59,13 @@ const HomeLayout = () => {
   })
 
   useEffect(() => {
-    getAllProjectList()
-    getStatusAll()
-    getPriorityAll()
-    getTaskTypeAll()
-  }, [])
+    if (open) {
+      if (!status.length) getStatusAll()
+      if (!priority.length) getPriorityAll()
+      if (!taskType.length) getTaskTypeAll()
+      if (!arrProject?.length) getAllProjectList()
+    }
+  }, [open])
 
   const getAllProjectList = () => dispatch(setArrProjectAll())
 
@@ -212,20 +215,24 @@ const HomeLayout = () => {
         }}
       >
         <Sider breakpoint='lg' collapsedWidth={0} collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-          <div className='demo-logo-vertical' style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className='demo-logo-vertical mt-4' style={{ display: 'flex', justifyContent: 'center' }}>
             <Link to='/jira/projectmanagement' className='navbar-brand text-white'>
               <FontAwesomeIcon icon={faJira} className='mr-2' />
               Jira SoftWare
             </Link>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className='my-4' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px' }}>
             <img style={{ borderRadius: '50%' }} src={userInfo.avatar} alt='' width={50} height={50} />
             <div>
-              <p className='text-white'>{userInfo.name}</p>
-              <p style={{ cursor: 'pointer' }} className='text-danger' onClick={() => handleLogout()}>
-                Logout🚪
+              <p className='text-white' style={{ fontSize: '17px' }}>
+                {userInfo.name}
               </p>
+              <LogoutOutlined
+                style={{ fontSize: '25px', cursor: 'pointer' }}
+                onClick={handleLogout}
+                className='text-white'
+              />
             </div>
           </div>
 
@@ -396,7 +403,6 @@ const HomeLayout = () => {
                     options={userOptions}
                     style={{ width: '100%' }}
                     placeholder='select one country'
-                    onSelect={(value) => console.log(value)}
                     optionFilterProp='label'
                   ></Select>
                 </Form.Item>

@@ -59,7 +59,6 @@ export const filterProjectAction = (keyword = '') => {
 export const setMemberInfoAction = (keyword, projectId) => {
   return async (dispatch) => {
     const result = await fetchGetUserApi(keyword)
-    console.log(result)
 
     dispatch({
       type: SET_MEMBER_INFO,

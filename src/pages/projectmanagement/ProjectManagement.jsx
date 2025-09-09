@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 
 import { AutoComplete, Input, Table, Avatar, Tag, Button, notification, Popover, Space, List, Tooltip } from 'antd'
 import { deleteProjectApi, getAssignUserProjectApi, removeUserFromProjectApi } from '../../servers/project'
@@ -11,7 +11,6 @@ import {
   deleteProjectAction,
   filterProjectAction,
   setMemberInfoAction,
-  setProjectDetailArrAction,
   setProjectListAction
 } from '../../store/actions/projectDetailAction'
 import { LoadingContext } from '../../contexts/loading/LoadingContext'
@@ -29,22 +28,22 @@ export default function ProjectManagement() {
   const [pinCode, setPinCode] = useState('')
 
   useEffect(() => {
-    // setTimeout(() => {
-    //   setLoadingState({ isLoading: true });
-    // }, 200);
+    const getAllProject = async () => {
+      try {
+        // setLoadingState({ isLoading: true })
+        await dispatch(setProjectListAction())
+      } catch (error) {
+        console.error('Error fetching project list:', error)
+      } finally {
+        // setLoadingState({ isLoading: false })
+      }
+    }
     getAllProject()
-    // setTimeout(() => {
-    //   setLoadingState({ isLoading: false });
-    // }, 2000);
   }, [])
-
-  const getAllProject = () => {
-    dispatch(setProjectListAction())
-  }
 
   const isMobile = useMediaQuery({ query: `(max-width :624px)` })
 
-  const columns = [
+  const columns = useMemo(() => [
     {
       title: 'Id',
       dataIndex: 'id',
@@ -57,17 +56,10 @@ export default function ProjectManagement() {
     {
       title: 'Project name',
       dataIndex: 'projectName',
-      sorter: (item2, item1) => {
-        let projectName1 = item1.projectName1?.trim().toLowerCase()
-        let projectName2 = item2.projectName2?.trim().toLowerCase()
-        if (projectName2 < projectName1) {
-          return -1
-        }
-        return 1
-      },
+      sorter: (a, b) => a.projectName.trim().localeCompare(b.projectName.trim()),
       sortDirection: ['descend'],
       key: 2,
-      render: (text, record, index) => {
+      render: (text, record) => {
         return (
           <NavLink to={`/jira/projectdetail/${record.id}`} style={{ textDecoration: 'none' }}>
             {text}
@@ -141,24 +133,7 @@ export default function ProjectManagement() {
                             <td>{item.name}</td>
                             <td>
                               <CloseOutlined
-                                onClick={async () => {
-                                  const data = {
-                                    projectId: text.id,
-                                    userId: item.userId
-                                  }
-
-                                  try {
-                                    await removeUserFromProjectApi(data)
-                                    dispatch(deleteMemberAction(text.id, item.userId))
-                                    notification.success({
-                                      message: 'Xoá user thành công!'
-                                    })
-                                  } catch (error) {
-                                    notification.error({
-                                      message: error.response.data.content
-                                    })
-                                  }
-                                }}
+                                onClick={async () => handleRemoveUser(text.id, item.userId)}
                                 style={{
                                   backgroundColor: 'red',
                                   width: '30px',
@@ -216,24 +191,7 @@ export default function ProjectManagement() {
                               <td>
                                 <Space>
                                   <CloseOutlined
-                                    onClick={async () => {
-                                      const data = {
-                                        projectId: text.id,
-                                        userId: item.userId
-                                      }
-
-                                      try {
-                                        await removeUserFromProjectApi(data)
-                                        dispatch(deleteMemberAction(text.id, item.userId))
-                                        notification.success({
-                                          message: 'Xoá user thành công!'
-                                        })
-                                      } catch (error) {
-                                        notification.error({
-                                          message: error.response.data.content
-                                        })
-                                      }
-                                    }}
+                                    onClick={async () => handleRemoveUser(text.id, item.userId)}
                                     style={{
                                       backgroundColor: 'red',
                                       width: '30px',
@@ -353,7 +311,7 @@ export default function ProjectManagement() {
         )
       }
     }
-  ]
+  ])
 
   const search = async (value) => {
     const result = await fetchGetUserApi(value)
@@ -371,6 +329,25 @@ export default function ProjectManagement() {
     }, 200)
     return () => clearTimeout(getData)
   }, [pinCode])
+
+  const handleRemoveUser = async (projectId, userId) => {
+    const data = {
+      projectId,
+      userId
+    }
+
+    try {
+      await removeUserFromProjectApi(data)
+      dispatch(deleteMemberAction(projectId, userId))
+      notification.success({
+        message: 'Xoá user thành công!'
+      })
+    } catch (error) {
+      notification.error({
+        message: error.response.data.content
+      })
+    }
+  }
 
   return (
     <>

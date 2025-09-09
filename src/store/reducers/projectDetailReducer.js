@@ -1,5 +1,5 @@
 import { notification } from 'antd'
-import { data } from 'jquery'
+
 import {
   ADD_MEMBER_BOARD,
   DELETE_COMMENT,
@@ -12,12 +12,10 @@ import {
   GET_USER_BY_PROJECTID,
   INSERT_COMMENT,
   REMOVE_MEMBER_BOARD,
-  REMOVE_TASK,
   SEARCH_MEMBER_BOARD,
   SET_COMMENT_ALL,
   SET_DESCRIPTION,
   SET_MEMBER_INFO,
-  SET_PROJECT_DETAIL,
   SET_PROJECT_DETAIL_ARR,
   SET_PROJECT_LIST,
   SET_TASKDETAIL
@@ -76,7 +74,6 @@ export const projectDetailReducer = (state = DEFAULT_STATE, action) => {
         data.push(...payload.members)
       }
       state.projectDetail.members = data
-      console.log(state.projectDetail.members)
       break
     }
 
